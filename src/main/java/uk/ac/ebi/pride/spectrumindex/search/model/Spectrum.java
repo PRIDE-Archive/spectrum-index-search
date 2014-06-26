@@ -23,8 +23,8 @@ public class Spectrum {
     @Field(SpectrumFields.PRECURSOR_CHARGE)
     private int precursorCharge;
 
-    @Field(SpectrumFields.IONS)
-    private List<String> ions;
+    @Field(SpectrumFields.PEAKS)
+    private List<String> peaks;
 
     public String getId() {
         return id;
@@ -58,4 +58,11 @@ public class Spectrum {
         this.precursorCharge = precursorCharge;
     }
 
+    public List<String> getPeaks() {
+        return peaks;
+    }
+
+    public void setPeaks(List<String> peaks) {
+        this.peaks = peaks;
+    }
 }

@@ -41,7 +41,7 @@ public class ProjectSpectraIndexer {
             List<Spectrum> spectraToIndex = new LinkedList<Spectrum>();
             for (int i=0; i<inputParser.getSpectraCount();i++) {
                 uk.ac.ebi.pride.tools.jmzreader.model.Spectrum spectrum = inputParser.getSpectrumByIndex(i);
-                Spectrum solrSpectrum = SpectrumJmzReaderMapper.createSpectrum(projectAccession, assayAccession, spectrum);
+                Spectrum solrSpectrum = SpectrumJmzReaderMapper.createSolrSpectrum(projectAccession, assayAccession, spectrum);
                 spectraToIndex.add(solrSpectrum);
             }
             spectrumIndexService.save(spectraToIndex);
