@@ -267,6 +267,13 @@
             <artifactId>oracle-thin</artifactId>
         </dependency>
 
+        <!--MGF parsing-->
+        <dependency>
+            <groupId>uk.ac.ebi.pride.tools</groupId>
+            <artifactId>mgf-parser</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>
