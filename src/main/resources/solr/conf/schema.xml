@@ -111,7 +111,7 @@
         <field name="search_engine" type="text_ws" indexed="true" stored="true" required="false" multiValued="true"/>
         <field name="search_engine_score" type="text_ws" indexed="true" stored="true" required="false" multiValued="true"/>
         <field name="retention_time" type="double" indexed="true" stored="true" required="false" multiValued="false"/>
-        <field name="charge" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+        <field name="precursorCharge" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="exp_mass_to_charge" type="double" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="calc_mass_to_charge" type="double" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="pre_amino_acid" type="string" indexed="true" stored="true" required="false" multiValued="false"/>

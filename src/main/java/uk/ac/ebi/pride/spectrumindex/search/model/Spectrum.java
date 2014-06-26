@@ -20,8 +20,8 @@ public class Spectrum {
     @Field(SpectrumFields.ASSAY_ACCESSION)
     private String assayAccession;
 
-    @Field(SpectrumFields.CHARGE)
-    private int charge;
+    @Field(SpectrumFields.PRECURSOR_CHARGE)
+    private int precursorCharge;
 
     @Field(SpectrumFields.IONS)
     private List<String> ions;
@@ -50,12 +50,12 @@ public class Spectrum {
         this.assayAccession = assayAccession;
     }
 
-    public int getCharge() {
-        return charge;
+    public int getPrecursorCharge() {
+        return precursorCharge;
     }
 
-    public void setCharge(int charge) {
-        this.charge = charge;
+    public void setPrecursorCharge(int precursorCharge) {
+        this.precursorCharge = precursorCharge;
     }
 
 }
