@@ -1,6 +1,7 @@
 package uk.ac.ebi.pride.spectrumindex.search.tools;
 
-import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
+
+import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 
 /**
  * @author Jose A. Dianes
@@ -9,7 +10,13 @@ import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
 public class SpectrumJmzReaderMapper {
 
 
-    public static uk.ac.ebi.pride.spectrumindex.search.model.Spectrum createSpectrum(String projectAccession, String assayAccession, Spectrum spectrum) {
-        return null;
+    public static uk.ac.ebi.pride.spectrumindex.search.model.Spectrum createSpectrum(String projectAccession, String assayAccession, uk.ac.ebi.pride.tools.jmzreader.model.Spectrum jmzReaderSpectrum) {
+        Spectrum res = new Spectrum();
+
+        res.setProjectAccession(projectAccession);
+        res.setAssayAccession(assayAccession);
+
+
+        return res;
     }
 }

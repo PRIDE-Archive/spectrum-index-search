@@ -17,6 +17,9 @@ public class Spectrum {
     @Field(SpectrumFields.PROJECT_ACCESSION)
     private String projectAccession;
 
+    @Field(SpectrumFields.ASSAY_ACCESSION)
+    private String assayAccession;
+
     @Field(SpectrumFields.CHARGE)
     private int charge;
 
@@ -37,6 +40,14 @@ public class Spectrum {
 
     public void setProjectAccession(String projectAccession) {
         this.projectAccession = projectAccession;
+    }
+
+    public String getAssayAccession() {
+        return assayAccession;
+    }
+
+    public void setAssayAccession(String assayAccession) {
+        this.assayAccession = assayAccession;
     }
 
     public int getCharge() {
