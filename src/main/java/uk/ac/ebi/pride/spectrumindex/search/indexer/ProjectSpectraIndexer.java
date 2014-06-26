@@ -5,7 +5,11 @@ import org.slf4j.LoggerFactory;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumIndexService;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumSearchService;
+import uk.ac.ebi.pride.spectrumindex.search.tools.SpectrumJmzReaderMapper;
+import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
+import uk.ac.ebi.pride.tools.mgf_parser.MgfFile;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -24,7 +28,7 @@ public class ProjectSpectraIndexer {
         this.spectrumIndexService = spectrumIndexService;
     }
 
-    public void indexAllSpectraForProjectAndAssay(String projectAccession, String assayAccession){
+    public void indexAllSpectraForProjectAndAssay(String projectAccession, String assayAccession, File mgfFile){
         LinkedList<Spectrum> spectra = new LinkedList<Spectrum>();
 
         long startTime;
@@ -32,6 +36,19 @@ public class ProjectSpectraIndexer {
 
         startTime = System.currentTimeMillis();
 
+        try {
+            MgfFile inputParser = new MgfFile(mgfFile);
+            List<Spectrum> spectraToIndex = new LinkedList<Spectrum>();
+            for (int i=0; i<inputParser.getSpectraCount();i++) {
+                uk.ac.ebi.pride.tools.jmzreader.model.Spectrum spectrum = inputParser.getSpectrumByIndex(i);
+                Spectrum solrSpectrum = SpectrumJmzReaderMapper.createSpectrum(projectAccession, assayAccession, spectrum);
+                spectraToIndex.add(solrSpectrum);
+            }
+            spectrumIndexService.save(spectraToIndex);
+
+        } catch (JMzReaderException e) {
+            e.printStackTrace();
+        }
 
 
         endTime = System.currentTimeMillis();
