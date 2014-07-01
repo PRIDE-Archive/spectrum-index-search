@@ -2,6 +2,7 @@ package uk.ac.ebi.pride.spectrumindex.search.util;
 
 
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
+import uk.ac.ebi.pride.tools.mgf_parser.model.Ms2Query;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,18 +15,15 @@ import java.util.Map;
  */
 public class SpectrumJmzReaderMapper {
 
-
-    private static final String ENTRY_SEPARATOR = " ";
-
-    public static uk.ac.ebi.pride.spectrumindex.search.model.Spectrum createSolrSpectrum(String projectAccession, String assayAccession, uk.ac.ebi.pride.tools.jmzreader.model.Spectrum jmzReaderSpectrum) {
+    public static uk.ac.ebi.pride.spectrumindex.search.model.Spectrum createSolrSpectrum(String projectAccession, String assayAccession, Ms2Query jmzReaderSpectrum) {
         Spectrum res = new Spectrum();
 
-        res.setId(jmzReaderSpectrum.getId());
+        res.setId(jmzReaderSpectrum.getTitle());
         res.setProjectAccession(projectAccession);
         res.setAssayAccession(assayAccession);
         res.setPrecursorCharge(jmzReaderSpectrum.getPrecursorCharge());
         res.setPrecursorMz(jmzReaderSpectrum.getPrecursorMZ());
-        res.setPrecursorIntensity(jmzReaderSpectrum.getPrecursorIntensity());
+        if (jmzReaderSpectrum.getPrecursorIntensity()!= null) res.setPrecursorIntensity(jmzReaderSpectrum.getPrecursorIntensity());
 
         double[] peaksIntensities = new double[jmzReaderSpectrum.getPeakList().size()];
         double[] peaksMz = new double[jmzReaderSpectrum.getPeakList().size()];

@@ -34,16 +34,16 @@ public class SpectrumIndexService {
         solrSpectrumRepository.save(spectrum);
     }
 
-    public void save(Iterable<Spectrum> psms) {
-        if (psms==null || !psms.iterator().hasNext())
-            logger.info("No PSMS to save");
+    public void save(Iterable<Spectrum> spectra) {
+        if (spectra==null || !spectra.iterator().hasNext())
+            logger.info("No Spectrum to save");
         else {
-            // fix the accession if needed
-//        for (Psm psm: psms) {
-////            logger.info("Saving PSM with accession " + psm.getId());
-//            psm.setId(PsmIdCleaner.cleanId(psm.getId()));
-//        }
-            solrSpectrumRepository.save(psms);
+
+
+            for (Spectrum spectrum: spectra) {
+                logger.info("Saving PSMs: " + spectrum.getId());
+            }
+            solrSpectrumRepository.save(spectra);
         }
     }
 
@@ -61,5 +61,9 @@ public class SpectrumIndexService {
 
     public void deleteAll() {
         solrSpectrumRepository.deleteAll();
+    }
+
+    public void deleteByProjectId(String projectAccession) {
+        solrSpectrumRepository.deleteByProjectAccession(projectAccession);
     }
 }

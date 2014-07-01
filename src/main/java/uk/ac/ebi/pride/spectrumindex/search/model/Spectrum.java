@@ -1,8 +1,10 @@
 package uk.ac.ebi.pride.spectrumindex.search.model;
 
 import org.apache.solr.client.solrj.beans.Field;
+import org.apache.commons.codec.binary.Base64;
 
-import java.util.List;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * @author Jose A. Dianes
@@ -10,6 +12,12 @@ import java.util.List;
  *
  */
 public class Spectrum {
+
+    /**
+     * Defines the number of bytes required in an UNENCODED byte array to hold
+     * a dingle double value.
+     */
+    public static final int BYTES_TO_HOLD_DOUBLE = 8;
 
     @Field(SpectrumFields.ID)
     private String id;
@@ -32,11 +40,17 @@ public class Spectrum {
     @Field(SpectrumFields.IDENTIFIED_SPECTRA)
     private boolean identifiedSpectra;
 
+//    @Field(SpectrumFields.PEAKS_INTENSITIES)
+//    private String peaksIntensities;
+//
+//    @Field(SpectrumFields.PEAKS_MZ)
+//    private String peaksMz;
+
     @Field(SpectrumFields.PEAKS_INTENSITIES)
-    private double[] peaksIntensities;
+    private byte[] peaksIntensities;
 
     @Field(SpectrumFields.PEAKS_MZ)
-    private double[] peaksMz;
+    private byte[] peaksMz;
 
     public String getId() {
         return id;
@@ -94,19 +108,41 @@ public class Spectrum {
         this.identifiedSpectra = identifiedSpectra;
     }
 
-    public double[] getPeaksIntensities() {
-        return peaksIntensities;
+//    public double[] getPeaksIntensities() {
+//        return fromBytesStringToDoubles(this.peaksIntensities);
+//    }
+//
+//    public void setPeaksIntensities(double[] peaksIntensities) {
+//        this.peaksIntensities = fromDoublesToBytesString(peaksIntensities);
+//    }
+//
+//    public double[] getPeaksMz() {
+//       return fromBytesStringToDoubles(this.peaksMz);
+//    }
+//
+//    public void setPeaksMz(double[] peaksMz) {
+//        this.peaksMz = fromDoublesToBytesString(peaksMz);
+//    }
+
+    private double[] fromBytesStringToDoubles(String bytesString) {
+        byte[] bytesArray = Base64.decodeBase64(bytesString);
+        ByteBuffer bytes = ByteBuffer.wrap(bytesArray);
+        bytes.order(ByteOrder.LITTLE_ENDIAN);
+        double[] res = new double[bytesArray.length/BYTES_TO_HOLD_DOUBLE];
+        int j=0;
+        for (int i=0; i<bytesArray.length; i=i+BYTES_TO_HOLD_DOUBLE) {
+            res[j] = bytes.getDouble(i);
+            j++;
+        }
+        return res;
     }
 
-    public void setPeaksIntensities(double[] peaksIntensities) {
-        this.peaksIntensities = peaksIntensities;
-    }
-
-    public double[] getPeaksMz() {
-        return peaksMz;
-    }
-
-    public void setPeaksMz(double[] peaksMz) {
-        this.peaksMz = peaksMz;
+    private String fromDoublesToBytesString(double[] doubles) {
+        ByteBuffer buffer = ByteBuffer.allocate(doubles.length * BYTES_TO_HOLD_DOUBLE);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        for (double aDouble: doubles) {
+            buffer.putDouble(aDouble);
+        }
+        return Base64.encodeBase64String(buffer.array());
     }
 }

@@ -39,12 +39,12 @@ public class SpectrumSearchService {
 
 
     // find by project accession methods
-    public List<Spectrum> findByProjectAccession(String projectAccession) {
-        return solrSpectrumRepository.findByProjectAccession(projectAccession);
+    public Page<Spectrum> findByProjectAccession(String projectAccession, Pageable pageable) {
+        return solrSpectrumRepository.findByProjectAccession(projectAccession, pageable);
     }
 
-    public List<Spectrum> findByProjectAccession(Collection<String> projectAccessions) {
-        return solrSpectrumRepository.findByIdIn(projectAccessions);
+    public Page<Spectrum> findByProjectAccession(Collection<String> projectAccessions, Pageable pageable) {
+        return solrSpectrumRepository.findByProjectAccessionIn(projectAccessions, pageable);
     }
 
 

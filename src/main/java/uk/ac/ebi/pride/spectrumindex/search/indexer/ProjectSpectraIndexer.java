@@ -8,6 +8,7 @@ import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumSearchService;
 import uk.ac.ebi.pride.spectrumindex.search.util.SpectrumJmzReaderMapper;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mgf_parser.MgfFile;
+import uk.ac.ebi.pride.tools.mgf_parser.model.Ms2Query;
 
 import java.io.File;
 import java.util.*;
@@ -18,6 +19,7 @@ import java.util.*;
  */
 public class ProjectSpectraIndexer {
 
+    private static final int INDEXING_SIZE_STEP = 500;
     private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexer.class.getName());
 
     private SpectrumSearchService spectrumSearchService;
@@ -39,10 +41,15 @@ public class ProjectSpectraIndexer {
         try {
             MgfFile inputParser = new MgfFile(mgfFile);
             List<Spectrum> spectraToIndex = new LinkedList<Spectrum>();
-            for (int i=0; i<inputParser.getSpectraCount();i++) {
-                uk.ac.ebi.pride.tools.jmzreader.model.Spectrum spectrum = inputParser.getSpectrumByIndex(i);
+            logger.info("There are " + inputParser.getSpectraCount() + " spectra to index");
+            for (int i=1; i<=inputParser.getSpectraCount();i++) {
+                Ms2Query spectrum = (Ms2Query) inputParser.getSpectrumByIndex(i);
                 Spectrum solrSpectrum = SpectrumJmzReaderMapper.createSolrSpectrum(projectAccession, assayAccession, spectrum);
                 spectraToIndex.add(solrSpectrum);
+                if (spectraToIndex.size() >= INDEXING_SIZE_STEP) {
+                    spectrumIndexService.save(spectraToIndex);
+                    spectraToIndex = new LinkedList<Spectrum>();
+                }
             }
             spectrumIndexService.save(spectraToIndex);
 
@@ -58,9 +65,7 @@ public class ProjectSpectraIndexer {
 
     public void deleteAllPsmsForProject(String projectAccession) {
 
-        // search by project accession
-        List<Spectrum> spectra = this.spectrumSearchService.findByProjectAccession(projectAccession);
-        this.spectrumIndexService.delete(spectra);
+        this.spectrumIndexService.deleteByProjectId(projectAccession);
 
     }
 

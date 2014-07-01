@@ -8,24 +8,36 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.solr.core.SolrTemplate;
+import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumIndexService;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumSearchService;
+import uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepository;
 import uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepositoryFactory;
+import uk.ac.ebi.pride.tools.mgf_parser.MgfFile;
+
+import java.io.File;
 
 public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
 
 
+    private static final String PATH_TO_MGF = "src/test/resources/submissions/PXD000021/PRIDE_Exp_Complete_Ac_27179.pride.mgf";
+    private static final int NUM_PEAKS_SPECTRUM_1 = 0;
     private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexerTest.class);
 
-    private static final String PROJECT_1_ACCESSION = "PXD000581";
-    private static final String PROJECT_2_ACCESSION = "TST000121";
+    private static final int NUM_RESULTS_PER_PAGE = 100;
+    private static final String SPECTRUM_1_ID = "id=PXD000021;PRIDE_Exp_Complete_Ac_27179.xml;spectrum=0";
+    private static final String PROJECT_1_ACCESSION = "PXD000021";
+    private static final String PROJECT_1_ASSAY_1 = "27179";
 
-    private static final String PROJECT_1_ASSAY_1 = "32411";
-    private static final String PROJECT_1_ASSAY_2 = "32416";
-    private static final String PROJECT_2_ASSAY_1 = "00001";
 
     private SolrSpectrumRepositoryFactory solrSpectrumRepositoryFactory;
+
+    private ProjectSpectraIndexer projectSpectraIndexer;
+    private SpectrumIndexService spectrumIndexService;
+    private SpectrumSearchService spectrumSearchService;
 
     @Before
     @Override
@@ -33,6 +45,15 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
         super.setUp();
         SolrServer server = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
         solrSpectrumRepositoryFactory = new SolrSpectrumRepositoryFactory(new SolrTemplate(server));
+        SolrSpectrumRepository solrSpectrumRepository = solrSpectrumRepositoryFactory.create();
+        spectrumSearchService = new SpectrumSearchService(solrSpectrumRepository);
+        spectrumIndexService = new SpectrumIndexService(solrSpectrumRepository);
+        projectSpectraIndexer =
+                new ProjectSpectraIndexer(
+                        spectrumSearchService,
+                        spectrumIndexService
+                );
+
     }
 
     @BeforeClass
@@ -41,35 +62,26 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
                 "src/test/resources/solr/collection1/conf/schema.xml",
                 "src/test/resources/solr");
 
+
+
     }
 
     @Test
-    public void testIndexAllPsmsForProjectAndAssay() throws Exception {
-        SpectrumSearchService SpectrumSearchService = new SpectrumSearchService(this.solrSpectrumRepositoryFactory.create());
-        SpectrumIndexService SpectrumIndexService = new SpectrumIndexService(this.solrSpectrumRepositoryFactory.create());
+    public void testIndexMgf() throws Exception {
 
-        ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(SpectrumSearchService, SpectrumIndexService);
+        projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_1_ACCESSION, PROJECT_1_ASSAY_1, new File(PATH_TO_MGF));
 
-        projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_1_ACCESSION, PROJECT_1_ASSAY_1);
-        projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_1_ACCESSION, PROJECT_1_ASSAY_2);
-        projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_2_ACCESSION, PROJECT_2_ASSAY_1);
+        Page<Spectrum> page = spectrumSearchService.findByProjectAccession(PROJECT_1_ACCESSION, new PageRequest(0, NUM_RESULTS_PER_PAGE));
+        assertEquals(NUM_RESULTS_PER_PAGE, page.getSize());
 
-        // TODO: actual checks for this test case
-    }
+        Spectrum firstSpectrum = page.getContent().get(0);
 
-    @Test
-    public void testDeleteAllPsmsForProject() throws Exception {
-
-        SpectrumSearchService SpectrumSearchService = new SpectrumSearchService(this.solrSpectrumRepositoryFactory.create());
-        SpectrumIndexService SpectrumIndexService = new SpectrumIndexService(this.solrSpectrumRepositoryFactory.create());
-
-        ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(SpectrumSearchService, SpectrumIndexService);
-
-        projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_1_ACCESSION, PROJECT_1_ASSAY_1);
-        projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_1_ACCESSION, PROJECT_1_ASSAY_2);
-
-
-        // TODO: actual checks for this test case
+        assertEquals(PROJECT_1_ACCESSION, firstSpectrum.getProjectAccession());
+        assertEquals(PROJECT_1_ASSAY_1, firstSpectrum.getAssayAccession());
+//        assertEquals(SPECTRUM_1_ID, firstSpectrum.getId());
+        assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksMz().length);
+        assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksIntensities().length);
 
     }
+
 }
