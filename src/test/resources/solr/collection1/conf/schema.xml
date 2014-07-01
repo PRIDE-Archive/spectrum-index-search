@@ -101,8 +101,11 @@
         <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
         <field name="project_accession" type="text_ws" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="assay_accession" type="text_ws" indexed="true" stored="true" required="false" multiValued="false"/>
-        <field name="peaks" type="text_ws" indexed="false" stored="true" required="false" multiValued="true"/>
-        <field name="precursor_charge" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+        <field name="peaks" type="binary" indexed="false" stored="true" required="false" multiValued="false"/>
+        <field name="precursor_charge" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
+        <field name="precursor_mz" type="double" indexed="true" stored="true" required="true" multiValued="false"/>
+        <field name="precursor_intensity" type="double" indexed="true" stored="true" required="false" multiValued="false"/>
+        <field name="identified_spectra" type="boolean" indexed="true" stored="true" required="false" multiValued="false"/>
 
         <!-- catchall field, containing all other searchable text fields (implemented
              via copyField further on in this schema  -->

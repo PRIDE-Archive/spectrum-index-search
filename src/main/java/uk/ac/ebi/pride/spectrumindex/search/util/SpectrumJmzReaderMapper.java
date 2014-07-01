@@ -3,6 +3,7 @@ package uk.ac.ebi.pride.spectrumindex.search.util;
 
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,20 +20,23 @@ public class SpectrumJmzReaderMapper {
     public static uk.ac.ebi.pride.spectrumindex.search.model.Spectrum createSolrSpectrum(String projectAccession, String assayAccession, uk.ac.ebi.pride.tools.jmzreader.model.Spectrum jmzReaderSpectrum) {
         Spectrum res = new Spectrum();
 
-        // TODO: build a proper ID
-        // ...
-
+        res.setId(jmzReaderSpectrum.getId());
         res.setProjectAccession(projectAccession);
         res.setAssayAccession(assayAccession);
         res.setPrecursorCharge(jmzReaderSpectrum.getPrecursorCharge());
+        res.setPrecursorMz(jmzReaderSpectrum.getPrecursorMZ());
+        res.setPrecursorIntensity(jmzReaderSpectrum.getPrecursorIntensity());
 
-        List<String> peaks = new LinkedList<String>();
+        double[] peaksIntensities = new double[jmzReaderSpectrum.getPeakList().size()];
+        double[] peaksMz = new double[jmzReaderSpectrum.getPeakList().size()];
+        int i = 0;
         for (Map.Entry<Double, Double> peakEntry: jmzReaderSpectrum.getPeakList().entrySet()) {
-            String peak = peakEntry.getKey() + ENTRY_SEPARATOR + peakEntry.getValue();
-            peaks.add(peak);
-
+            peaksIntensities[i] = peakEntry.getValue();
+            peaksMz[i]= peakEntry.getKey();
+            i++;
         }
-        res.setPeaks(peaks);
+        res.setPeaksIntensities(peaksIntensities);
+        res.setPeaksMz(peaksMz);
         return res;
     }
 }

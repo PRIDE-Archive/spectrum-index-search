@@ -23,8 +23,20 @@ public class Spectrum {
     @Field(SpectrumFields.PRECURSOR_CHARGE)
     private int precursorCharge;
 
-    @Field(SpectrumFields.PEAKS)
-    private List<String> peaks;
+    @Field(SpectrumFields.PRECURSOR_MZ)
+    private double precursorMz;
+
+    @Field(SpectrumFields.PRECURSOR_INTENSITY)
+    private double precursorIntensity;
+
+    @Field(SpectrumFields.IDENTIFIED_SPECTRA)
+    private boolean identifiedSpectra;
+
+    @Field(SpectrumFields.PEAKS_INTENSITIES)
+    private double[] peaksIntensities;
+
+    @Field(SpectrumFields.PEAKS_MZ)
+    private double[] peaksMz;
 
     public String getId() {
         return id;
@@ -58,11 +70,43 @@ public class Spectrum {
         this.precursorCharge = precursorCharge;
     }
 
-    public List<String> getPeaks() {
-        return peaks;
+    public double getPrecursorMz() {
+        return precursorMz;
     }
 
-    public void setPeaks(List<String> peaks) {
-        this.peaks = peaks;
+    public void setPrecursorMz(double precursorMz) {
+        this.precursorMz = precursorMz;
+    }
+
+    public double getPrecursorIntensity() {
+        return precursorIntensity;
+    }
+
+    public void setPrecursorIntensity(double precursorIntensity) {
+        this.precursorIntensity = precursorIntensity;
+    }
+
+    public boolean isIdentifiedSpectra() {
+        return identifiedSpectra;
+    }
+
+    public void setIdentifiedSpectra(boolean identifiedSpectra) {
+        this.identifiedSpectra = identifiedSpectra;
+    }
+
+    public double[] getPeaksIntensities() {
+        return peaksIntensities;
+    }
+
+    public void setPeaksIntensities(double[] peaksIntensities) {
+        this.peaksIntensities = peaksIntensities;
+    }
+
+    public double[] getPeaksMz() {
+        return peaksMz;
+    }
+
+    public void setPeaksMz(double[] peaksMz) {
+        this.peaksMz = peaksMz;
     }
 }
