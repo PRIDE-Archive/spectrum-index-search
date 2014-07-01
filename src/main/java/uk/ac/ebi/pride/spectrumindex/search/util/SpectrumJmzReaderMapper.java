@@ -1,4 +1,4 @@
-package uk.ac.ebi.pride.spectrumindex.search.tools;
+package uk.ac.ebi.pride.spectrumindex.search.util;
 
 
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
