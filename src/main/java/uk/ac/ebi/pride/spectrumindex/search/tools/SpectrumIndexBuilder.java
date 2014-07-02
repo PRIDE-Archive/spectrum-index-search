@@ -27,6 +27,7 @@ import java.util.Calendar;
 @Component
 public class SpectrumIndexBuilder {
 
+    private static final String MGF_FILE_EXTENSION = ".pride.mgf";
     private static Logger logger = LoggerFactory.getLogger(SpectrumIndexBuilder.class.getName());
 
     private static final String COMPRESS_EXTENSION = "gz";
@@ -82,12 +83,18 @@ public class SpectrumIndexBuilder {
             for (ProjectFileProvider projectFile : projectFiles) {
                 //TODO: This will change when we have the internal file names in the database
 
-                if (ProjectFileSource.GENERATED.equals(projectFile.getFileSource())) { // TODO: REVIEW THIS FOR SPECTRUM FILE TYPE
+                if (ProjectFileSource.GENERATED.equals(projectFile.getFileSource())) {
 
                     String fileName = projectFile.getFileName();
 
-                    // TODO
-                    // ...
+                    if (fileName != null && fileName.contains(MGF_FILE_EXTENSION)) {
+                        String pathToMgfFile = buildAbsoluteMgfFilePath(
+                                spectrumIndexBuilder.submissionsDirectory.getAbsolutePath(),
+                                project,
+                                fileName
+                        );
+
+                    }
 
                 }
             }
@@ -96,7 +103,7 @@ public class SpectrumIndexBuilder {
 
 
     //TODO: Move it to a pride-archive-utils
-    public static String buildAbsoluteMzTabFilePath(String prefix, ProjectProvider project, String fileName) {
+    public static String buildAbsoluteMgfFilePath(String prefix, ProjectProvider project, String fileName) {
         if (project.isPublicProject()) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(project.getPublicationDate());
