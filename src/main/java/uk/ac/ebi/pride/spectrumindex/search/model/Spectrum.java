@@ -40,17 +40,17 @@ public class Spectrum {
     @Field(SpectrumFields.IDENTIFIED_SPECTRA)
     private boolean identifiedSpectra;
 
-//    @Field(SpectrumFields.PEAKS_INTENSITIES)
-//    private String peaksIntensities;
-//
-//    @Field(SpectrumFields.PEAKS_MZ)
-//    private String peaksMz;
-
     @Field(SpectrumFields.PEAKS_INTENSITIES)
-    private byte[] peaksIntensities;
+    private String peaksIntensities;
 
     @Field(SpectrumFields.PEAKS_MZ)
-    private byte[] peaksMz;
+    private String peaksMz;
+
+//    @Field(SpectrumFields.PEAKS_INTENSITIES)
+//    private byte[] peaksIntensities;
+//
+//    @Field(SpectrumFields.PEAKS_MZ)
+//    private byte[] peaksMz;
 
     public String getId() {
         return id;
@@ -108,24 +108,45 @@ public class Spectrum {
         this.identifiedSpectra = identifiedSpectra;
     }
 
-//    public double[] getPeaksIntensities() {
-//        return fromBytesStringToDoubles(this.peaksIntensities);
-//    }
-//
-//    public void setPeaksIntensities(double[] peaksIntensities) {
-//        this.peaksIntensities = fromDoublesToBytesString(peaksIntensities);
-//    }
-//
-//    public double[] getPeaksMz() {
-//       return fromBytesStringToDoubles(this.peaksMz);
-//    }
-//
-//    public void setPeaksMz(double[] peaksMz) {
-//        this.peaksMz = fromDoublesToBytesString(peaksMz);
-//    }
+    public double[] getPeaksIntensities() {
+        return fromBytesStringToDoubles(this.peaksIntensities);
+    }
+
+    public void setPeaksIntensities(double[] peaksIntensities) {
+        this.peaksIntensities = fromDoublesToBytesString(peaksIntensities);
+    }
+
+    public double[] getPeaksMz() {
+       return fromBytesStringToDoubles(this.peaksMz);
+    }
+
+    public void setPeaksMz(double[] peaksMz) {
+        this.peaksMz = fromDoublesToBytesString(peaksMz);
+    }
 
     private double[] fromBytesStringToDoubles(String bytesString) {
         byte[] bytesArray = Base64.decodeBase64(bytesString);
+        ByteBuffer bytes = ByteBuffer.wrap(bytesArray);
+        bytes.order(ByteOrder.LITTLE_ENDIAN);
+        double[] res = new double[bytesArray.length/BYTES_TO_HOLD_DOUBLE];
+        int j=0;
+        for (int i=0; i<bytesArray.length; i=i+BYTES_TO_HOLD_DOUBLE) {
+            res[j] = bytes.getDouble(i);
+            j++;
+        }
+        return res;
+    }
+
+    private byte[] fromDoublesToBytes(double[] doubles) {
+        ByteBuffer buffer = ByteBuffer.allocate(doubles.length * BYTES_TO_HOLD_DOUBLE);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        for (double aDouble: doubles) {
+            buffer.putDouble(aDouble);
+        }
+        return buffer.array();
+    }
+
+    private double[] fromBytesToDoubles(byte[] bytesArray) {
         ByteBuffer bytes = ByteBuffer.wrap(bytesArray);
         bytes.order(ByteOrder.LITTLE_ENDIAN);
         double[] res = new double[bytesArray.length/BYTES_TO_HOLD_DOUBLE];

@@ -24,7 +24,9 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
 
 
     private static final String PATH_TO_MGF = "src/test/resources/submissions/PXD000021/PRIDE_Exp_Complete_Ac_27179.pride.mgf";
-    private static final int NUM_PEAKS_SPECTRUM_1 = 0;
+    private static final int NUM_PEAKS_SPECTRUM_1 = 269;
+    private static final double FIRST_PEAK_MZ = 160.028;
+    private static final double FIRST_PEAK_INTENSITY = 1.082;
     private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexerTest.class);
 
     private static final int NUM_RESULTS_PER_PAGE = 100;
@@ -81,6 +83,8 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
 //        assertEquals(SPECTRUM_1_ID, firstSpectrum.getId());
         assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksMz().length);
         assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksIntensities().length);
+        assertTrue(FIRST_PEAK_MZ==firstSpectrum.getPeaksMz()[0]);
+        assertTrue(FIRST_PEAK_INTENSITY==firstSpectrum.getPeaksIntensities()[0]);
 
     }
 
