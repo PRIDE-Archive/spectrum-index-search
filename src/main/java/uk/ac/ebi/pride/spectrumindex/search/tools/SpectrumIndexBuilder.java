@@ -94,6 +94,9 @@ public class SpectrumIndexBuilder {
                                 fileName
                         );
 
+                        String assayAccession = spectrumIndexBuilder.assayRepository.findOne(projectFile.getAssayId()).getAccession();;
+                        projectSpectraIndexer.indexAllSpectraForProjectAndAssay(project.getAccession(), assayAccession, new File(pathToMgfFile));
+
                     }
 
                 }
