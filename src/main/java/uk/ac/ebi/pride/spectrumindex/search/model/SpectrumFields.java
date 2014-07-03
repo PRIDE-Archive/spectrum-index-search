@@ -15,5 +15,5 @@ public class SpectrumFields {
     public static final String PEAKS_INTENSITIES = "peaks_intensities";
     public static final String PEAKS_MZ = "peaks_mz";
     public static final String IDENTIFIED_SPECTRA = "identified_spectra";
-
+    public static final String MS_LEVEL = "ms_level";
 }

@@ -59,7 +59,6 @@
         <constructor-arg name="solrServer" ref="solrSpectrumServer"/>
     </bean>
 
-
     <bean id="solrSpectrumRepositoryFactory" class="uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepositoryFactory">
         <constructor-arg ref="solrTemplate"/>
     </bean>

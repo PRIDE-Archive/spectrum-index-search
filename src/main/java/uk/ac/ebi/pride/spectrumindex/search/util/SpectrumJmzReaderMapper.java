@@ -21,9 +21,10 @@ public class SpectrumJmzReaderMapper {
         res.setId(jmzReaderSpectrum.getTitle());
         res.setProjectAccession(projectAccession);
         res.setAssayAccession(assayAccession);
-        res.setPrecursorCharge(jmzReaderSpectrum.getPrecursorCharge());
-        res.setPrecursorMz(jmzReaderSpectrum.getPrecursorMZ());
+        if (jmzReaderSpectrum.getPrecursorCharge()!=null) res.setPrecursorCharge(jmzReaderSpectrum.getPrecursorCharge());
+        if (jmzReaderSpectrum.getPrecursorMZ()!=null) res.setPrecursorMz(jmzReaderSpectrum.getPrecursorMZ());
         if (jmzReaderSpectrum.getPrecursorIntensity()!= null) res.setPrecursorIntensity(jmzReaderSpectrum.getPrecursorIntensity());
+        if (jmzReaderSpectrum.getMsLevel()!= null) res.setMsLevel(jmzReaderSpectrum.getMsLevel());
 
         double[] peaksIntensities = new double[jmzReaderSpectrum.getPeakList().size()];
         double[] peaksMz = new double[jmzReaderSpectrum.getPeakList().size()];

@@ -99,12 +99,13 @@
 
         <!-- identifier for each document: the spectrum id -->
         <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
-        <field name="project_accession" type="text_ws" indexed="true" stored="true" required="false" multiValued="false"/>
-        <field name="assay_accession" type="text_ws" indexed="true" stored="true" required="false" multiValued="false"/>
+        <field name="project_accession" type="text_ws" indexed="true" stored="true" required="true" multiValued="false"/>
+        <field name="assay_accession" type="text_ws" indexed="true" stored="true" required="true" multiValued="false"/>
+        <field name="ms_level" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="peaks_intensities" type="string" indexed="false" stored="true" required="false" multiValued="false"/>
         <field name="peaks_mz" type="string" indexed="false" stored="true" required="false" multiValued="false"/>
-        <field name="precursor_charge" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
-        <field name="precursor_mz" type="double" indexed="true" stored="true" required="true" multiValued="false"/>
+        <field name="precursor_charge" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+        <field name="precursor_mz" type="double" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="precursor_intensity" type="double" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="identified_spectra" type="boolean" indexed="true" stored="true" required="false" multiValued="false"/>
 

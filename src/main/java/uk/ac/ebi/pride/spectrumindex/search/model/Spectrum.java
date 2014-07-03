@@ -28,6 +28,9 @@ public class Spectrum {
     @Field(SpectrumFields.ASSAY_ACCESSION)
     private String assayAccession;
 
+    @Field(SpectrumFields.MS_LEVEL)
+    private int msLevel;
+
     @Field(SpectrumFields.PRECURSOR_CHARGE)
     private int precursorCharge;
 
@@ -46,11 +49,6 @@ public class Spectrum {
     @Field(SpectrumFields.PEAKS_MZ)
     private String peaksMz;
 
-//    @Field(SpectrumFields.PEAKS_INTENSITIES)
-//    private byte[] peaksIntensities;
-//
-//    @Field(SpectrumFields.PEAKS_MZ)
-//    private byte[] peaksMz;
 
     public String getId() {
         return id;
@@ -165,5 +163,13 @@ public class Spectrum {
             buffer.putDouble(aDouble);
         }
         return Base64.encodeBase64String(buffer.array());
+    }
+
+    public void setMsLevel(int msLevel) {
+        this.msLevel = msLevel;
+    }
+
+    public int getMsLevel() {
+        return msLevel;
     }
 }
