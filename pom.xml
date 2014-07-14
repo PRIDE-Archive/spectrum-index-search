@@ -4,7 +4,7 @@
     <parent>
         <groupId>uk.ac.ebi.pride.maven</groupId>
         <artifactId>pride-base-master</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3-SNAPSHOT</version>
     </parent>
 
     <groupId>uk.ac.ebi.pride</groupId>
@@ -251,19 +251,6 @@
             <groupId>uk.ac.ebi.pride.tools</groupId>
             <artifactId>accession-resolver</artifactId>
             <version>1.0.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.ac.ebi.pride</groupId>
-            <artifactId>jmztab</artifactId>
-            <!-- based on mzTab specification version 1.0 RC5-->
-            <version>2.1.7</version>
             <exclusions>
                 <exclusion>
                     <groupId>log4j</groupId>
