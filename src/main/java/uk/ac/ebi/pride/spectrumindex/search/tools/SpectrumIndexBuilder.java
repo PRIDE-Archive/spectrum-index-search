@@ -128,9 +128,9 @@ public class SpectrumIndexBuilder {
             System.out.println("Indexing spectra for project " + project.getAccession() + "...");
             List<Spectrum> projectSpectra = spectrumIndexBuilder.spectrumSearchService.findByProjectAccession(project.getAccession(), new PageRequest(0,1)).getContent();
             if (projectSpectra!=null && projectSpectra.size()>0) {
-                indexSpectraForProject(project, spectrumIndexBuilder, projectSpectraIndexer);
-            } else {
                 System.out.println("Project " + project.getAccession() + " already in the index!");
+            } else {
+                indexSpectraForProject(project, spectrumIndexBuilder, projectSpectraIndexer);
             }
             System.out.println("DONE indexing project " + project.getAccession() + "!");
         }
