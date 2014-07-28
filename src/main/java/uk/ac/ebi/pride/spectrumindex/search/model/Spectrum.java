@@ -5,6 +5,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.List;
 
 /**
  * @author Jose A. Dianes
@@ -49,6 +50,16 @@ public class Spectrum {
     @Field(SpectrumFields.PEAKS_MZ)
     private String peaksMz;
 
+    @Field(SpectrumFields.RETENTION_TIME)
+    private List<Long> retentionTime;
+
+    public List<Long> getRetentionTime() {
+        return retentionTime;
+    }
+
+    public void setRetentionTime(List<Long> retentionTime) {
+        this.retentionTime = retentionTime;
+    }
 
     public String getId() {
         return id;
