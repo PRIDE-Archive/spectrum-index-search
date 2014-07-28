@@ -36,12 +36,12 @@ public class SpectrumIndexService {
 
     public void save(Iterable<Spectrum> spectra) {
         if (spectra==null || !spectra.iterator().hasNext())
-            logger.info("No Spectrum to save");
+            logger.debug("No Spectrum to save");
         else {
 
 
             for (Spectrum spectrum: spectra) {
-                logger.info("Saving PSMs: " + spectrum.getId());
+                logger.debug("Saving PSMs: " + spectrum.getId());
             }
             solrSpectrumRepository.save(spectra);
         }
@@ -53,7 +53,7 @@ public class SpectrumIndexService {
 
     public void delete(Iterable<Spectrum> psms){
         if (psms==null || !psms.iterator().hasNext())
-            logger.info("No PSMS to delete");
+            logger.debug("No PSMS to delete");
         else {
             solrSpectrumRepository.delete(psms);
         }

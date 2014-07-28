@@ -59,22 +59,18 @@ public class SpectrumIndexBuilder {
 
     public static void main(String[] args) {
 
-        System.out.print("Creating application context...");
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/app-context.xml");
-        System.out.println("DONE!");
 
-        System.out.print("Creating index builder...");
         SpectrumIndexBuilder spectrumIndexBuilder = context.getBean(SpectrumIndexBuilder.class);
-        System.out.println("DONE!");
 
         if (args.length>0 && "inc".equals(args[0].toLowerCase())) {
-            System.out.print("Starting incremental indexing process...");
+            logger.info("Starting incremental indexing process...");
             indexNonExistingSpectra(spectrumIndexBuilder);
-            System.out.println("DONE!");
+            logger.info("DONE!");
         } else if (args.length>0 && "all".equals(args[0].toLowerCase())) {
-            System.out.print("Starting indexing process...");
+            logger.info("Starting from-scratch indexing process...");
             indexSpectra(spectrumIndexBuilder);
-            System.out.println("DONE!");
+            logger.info("DONE!");
         } else {
             System.out.println("Arguments:");
             System.out.println("   inc   - index spectra not already in the index");
@@ -87,51 +83,47 @@ public class SpectrumIndexBuilder {
 
     public static void indexSpectra(SpectrumIndexBuilder spectrumIndexBuilder) {
 
-        System.out.print("Getting all projects in DB...");
+        logger.info("Getting all projects in DB...");
         // get all projects on repository
         Iterable<? extends ProjectProvider> projects = spectrumIndexBuilder.projectRepository.findAll();
-        System.out.println("DONE!");
+        logger.info("DONE!");
 
         // reset index
-        System.out.print("Deleting all spectra from index...");
+        logger.info("Deleting all spectra from index...");
         spectrumIndexBuilder.spectrumIndexService.deleteAll();
-        System.out.println("DONE!");
+        logger.info("DONE!");
 
         // create the indexer
         ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexBuilder.spectrumSearchService, spectrumIndexBuilder.spectrumIndexService);
 
         // iterate through project to index spectra
-        System.out.println("Indexing spectra...");
+        logger.info("Indexing spectra...");
         for (ProjectProvider project : projects) {
-            System.out.println("Indexing spectra for project " + project.getAccession() + "...");
-
+            logger.info("Indexing spectra for project " + project.getAccession() + "...");
             indexSpectraForProject(project, spectrumIndexBuilder, projectSpectraIndexer);
-
-            System.out.println("DONE indexing project " + project.getAccession() + "!");
+            logger.info("DONE indexing project " + project.getAccession() + "!");
         }
-        System.out.println("DONE indexing all spectra!");
+        logger.info("DONE indexing all spectra!");
     }
 
     public static void indexNonExistingSpectra(SpectrumIndexBuilder spectrumIndexBuilder) {
 
-        System.out.print("Getting all projects in DB...");
+        logger.info("Getting all projects in DB...");
         // get all projects on repository
         Iterable<? extends ProjectProvider> projects = spectrumIndexBuilder.projectRepository.findAll();
-        System.out.println("DONE!");
+        logger.info("DONE!");
 
         // create the indexer
         ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexBuilder.spectrumSearchService, spectrumIndexBuilder.spectrumIndexService);
 
         // iterate through project to index spectra
-        System.out.println("Indexing spectra...");
+        logger.info("Indexing spectra...");
         for (ProjectProvider project : projects) {
-            System.out.println("Indexing spectra for project " + project.getAccession() + "...");
-
+            logger.info("Indexing spectra for project " + project.getAccession() + "...");
             indexNonExistingSpectraForProject(project, spectrumIndexBuilder, projectSpectraIndexer);
-
-            System.out.println("DONE indexing project " + project.getAccession() + "!");
+            logger.info("DONE indexing project " + project.getAccession() + "!");
         }
-        System.out.println("DONE indexing all spectra!");
+        logger.info("DONE indexing all spectra!");
     }
 
 
@@ -143,9 +135,9 @@ public class SpectrumIndexBuilder {
             List<Spectrum> assaySpectra = spectrumIndexBuilder.spectrumSearchService.findByAssayAccession(assay.getAccession(), new PageRequest(0,1)).getContent();
 
             if (assaySpectra!=null && assaySpectra.size()>0) {
-                System.out.println("Assay " + assay.getAccession() + " of Project " + project.getAccession() + " already in the index!");
+                logger.info("Assay " + assay.getAccession() + " of Project " + project.getAccession() + " already in the index!");
             } else {
-                String mgfFileName = "PRIDE_Exp_Complete_Ac_" + assay.getAccession() + ".pride.mgf";
+                String mgfFileName = "PRIDE_Exp_Complete_Ac_" + assay.getAccession() + MGF_FILE_EXTENSION;
                 String pathToMgfFile = buildAbsoluteMgfFilePath(
                         spectrumIndexBuilder.submissionsDirectory.getAbsolutePath(),
                         project,
@@ -154,11 +146,11 @@ public class SpectrumIndexBuilder {
 
                 File mgfFile = new File(pathToMgfFile);
                 if (mgfFile.exists()) {
-                    System.out.println("Indexing spectra for file " + pathToMgfFile + "...");
+                    logger.info("Indexing spectra for file " + pathToMgfFile + "...");
                     projectSpectraIndexer.indexAllSpectraForProjectAndAssay(project.getAccession(), assay.getAccession(), mgfFile);
-                    System.out.println("DONE indexing file " + pathToMgfFile + "!");
+                    logger.info("DONE indexing file " + pathToMgfFile + "!");
                 } else {
-                    System.out.println("File " + pathToMgfFile + " does not exists");
+                    logger.info("File " + pathToMgfFile + " does not exists");
                 }
             }
 
@@ -198,7 +190,7 @@ public class SpectrumIndexBuilder {
         Iterable<? extends AssayProvider> projectAssays = spectrumIndexBuilder.assayRepository.findAllByProjectId(project.getId());
         for (AssayProvider assay: projectAssays) {
 
-            String mgfFileName = "PRIDE_Exp_Complete_Ac_" + assay.getAccession() + ".pride.mgf";
+            String mgfFileName = "PRIDE_Exp_Complete_Ac_" + assay.getAccession() + MGF_FILE_EXTENSION;
             String pathToMgfFile = buildAbsoluteMgfFilePath(
                     spectrumIndexBuilder.submissionsDirectory.getAbsolutePath(),
                     project,
@@ -207,11 +199,11 @@ public class SpectrumIndexBuilder {
 
             File mgfFile = new File(pathToMgfFile);
             if (mgfFile.exists()) {
-                System.out.println("Indexing spectra for file " + pathToMgfFile + "...");
+                logger.info("Indexing spectra for file " + pathToMgfFile + "...");
                 projectSpectraIndexer.indexAllSpectraForProjectAndAssay(project.getAccession(), assay.getAccession(), mgfFile);
-                System.out.println("DONE indexing file " + pathToMgfFile + "!");
+                logger.info("DONE indexing file " + pathToMgfFile + "!");
             } else {
-                System.out.println("File " + pathToMgfFile + " does not exists");
+                logger.info("File " + pathToMgfFile + " does not exists");
             }
 
         }
