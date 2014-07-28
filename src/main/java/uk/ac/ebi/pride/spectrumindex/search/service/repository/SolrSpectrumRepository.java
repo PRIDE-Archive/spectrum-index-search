@@ -32,5 +32,11 @@ public interface SolrSpectrumRepository extends SolrCrudRepository<Spectrum, Str
     @Query("project_accession:(?0)")
     Page<Spectrum> findByProjectAccessionIn(Collection<String> projectAccessions, Pageable pageable);
 
+    // Assay accession methods
+    @Query("assay_accession:?0")
+    Page<Spectrum> findByAssayAccession(String assayAccession, Pageable pageable);
+    @Query("assay_accession:(?0)")
+    Page<Spectrum> findByAssayAccessionIn(Collection<String> assayAccessions, Pageable pageable);
+
     void deleteByProjectAccession(String projectAccession);
 }

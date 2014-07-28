@@ -48,4 +48,12 @@ public class SpectrumSearchService {
     }
 
 
+    // find by assay accession methods
+    public Page<Spectrum> findByAssayAccession(String assayAccession, Pageable pageable) {
+        return solrSpectrumRepository.findByAssayAccession(assayAccession, pageable);
+    }
+
+    public Page<Spectrum> findByAssayAccession(Collection<String> assayAccessions, Pageable pageable) {
+        return solrSpectrumRepository.findByAssayAccessionIn(assayAccessions, pageable);
+    }
 }

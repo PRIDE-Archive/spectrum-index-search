@@ -126,15 +126,69 @@ public class SpectrumIndexBuilder {
         System.out.println("Indexing spectra...");
         for (ProjectProvider project : projects) {
             System.out.println("Indexing spectra for project " + project.getAccession() + "...");
-            List<Spectrum> projectSpectra = spectrumIndexBuilder.spectrumSearchService.findByProjectAccession(project.getAccession(), new PageRequest(0,1)).getContent();
-            if (projectSpectra!=null && projectSpectra.size()>0) {
-                System.out.println("Project " + project.getAccession() + " already in the index!");
-            } else {
-                indexSpectraForProject(project, spectrumIndexBuilder, projectSpectraIndexer);
-            }
+
+            indexNonExistingSpectraForProject(project, spectrumIndexBuilder, projectSpectraIndexer);
+
             System.out.println("DONE indexing project " + project.getAccession() + "!");
         }
         System.out.println("DONE indexing all spectra!");
+    }
+
+
+    private static void indexNonExistingSpectraForProject(ProjectProvider project, SpectrumIndexBuilder spectrumIndexBuilder, ProjectSpectraIndexer projectSpectraIndexer) {
+
+        // made up an MGF file name per assay (temporary)
+        Iterable<? extends AssayProvider> projectAssays = spectrumIndexBuilder.assayRepository.findAllByProjectId(project.getId());
+        for (AssayProvider assay: projectAssays) {
+            List<Spectrum> assaySpectra = spectrumIndexBuilder.spectrumSearchService.findByAssayAccession(assay.getAccession(), new PageRequest(0,1)).getContent();
+
+            if (assaySpectra!=null && assaySpectra.size()>0) {
+                System.out.println("Assay " + assay.getAccession() + " of Project " + project.getAccession() + " already in the index!");
+            } else {
+                String mgfFileName = "PRIDE_Exp_Complete_Ac_" + assay.getAccession() + ".pride.mgf";
+                String pathToMgfFile = buildAbsoluteMgfFilePath(
+                        spectrumIndexBuilder.submissionsDirectory.getAbsolutePath(),
+                        project,
+                        mgfFileName
+                );
+
+                File mgfFile = new File(pathToMgfFile);
+                if (mgfFile.exists()) {
+                    System.out.println("Indexing spectra for file " + pathToMgfFile + "...");
+                    projectSpectraIndexer.indexAllSpectraForProjectAndAssay(project.getAccession(), assay.getAccession(), mgfFile);
+                    System.out.println("DONE indexing file " + pathToMgfFile + "!");
+                } else {
+                    System.out.println("File " + pathToMgfFile + " does not exists");
+                }
+            }
+
+        }
+//            Iterable<? extends ProjectFileProvider> projectFiles = spectrumIndexBuilder.projectFileRepository.findAllByProjectId(project.getId());
+//            for (ProjectFileProvider projectFile : projectFiles) {
+//                //TODO: This will change when we have the internal file names in the database
+//                System.out.println("Checking file " + projectFile.getFileName() + "...");
+//
+//
+//                if (ProjectFileSource.GENERATED.equals(projectFile.getFileSource())) {
+//
+//                    String fileName = projectFile.getFileName();
+//
+//                    if (fileName != null && fileName.contains(MGF_FILE_EXTENSION)) {
+//                        String pathToMgfFile = buildAbsoluteMgfFilePath(
+//                                spectrumIndexBuilder.submissionsDirectory.getAbsolutePath(),
+//                                project,
+//                                fileName
+//                        );
+//
+//                        String assayAccession = spectrumIndexBuilder.assayRepository.findOne(projectFile.getAssayId()).getAccession()
+//                        System.out.print("Indexing spectra for file " + pathToMgfFile + "...");
+//                        projectSpectraIndexer.indexAllSpectraForProjectAndAssay(project.getAccession(), assayAccession, new File(pathToMgfFile));
+//                        System.out.println("DONE indexing file " + pathToMgfFile + "!");
+//
+//                    }
+//
+//                }
+//            }
     }
 
 
@@ -143,6 +197,7 @@ public class SpectrumIndexBuilder {
         // made up an MGF file name per assay (temporary)
         Iterable<? extends AssayProvider> projectAssays = spectrumIndexBuilder.assayRepository.findAllByProjectId(project.getId());
         for (AssayProvider assay: projectAssays) {
+
             String mgfFileName = "PRIDE_Exp_Complete_Ac_" + assay.getAccession() + ".pride.mgf";
             String pathToMgfFile = buildAbsoluteMgfFilePath(
                     spectrumIndexBuilder.submissionsDirectory.getAbsolutePath(),
@@ -187,7 +242,6 @@ public class SpectrumIndexBuilder {
 //                }
 //            }
     }
-
 
     //TODO: Move it to a pride-archive-utils
     public static String buildAbsoluteMgfFilePath(String prefix, ProjectProvider project, String fileName) {
