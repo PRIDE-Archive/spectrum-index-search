@@ -41,7 +41,7 @@ public class SpectrumIndexService {
 
 
             for (Spectrum spectrum: spectra) {
-                logger.debug("Saving PSMs: " + spectrum.getId());
+                logger.debug("Saving Spectra: " + spectrum.getId());
             }
             solrSpectrumRepository.save(spectra);
         }
@@ -53,7 +53,7 @@ public class SpectrumIndexService {
 
     public void delete(Iterable<Spectrum> psms){
         if (psms==null || !psms.iterator().hasNext())
-            logger.debug("No PSMS to delete");
+            logger.debug("No Spectra to delete");
         else {
             solrSpectrumRepository.delete(psms);
         }
