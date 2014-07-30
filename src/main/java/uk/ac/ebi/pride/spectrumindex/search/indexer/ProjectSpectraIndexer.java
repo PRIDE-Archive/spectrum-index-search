@@ -19,8 +19,9 @@ import java.util.*;
  */
 public class ProjectSpectraIndexer {
 
-    private static final int INDEXING_SIZE_STEP = 500;
     private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexer.class.getName());
+
+    private static final int INDEXING_SIZE_STEP = 100;
 
     private SpectrumSearchService spectrumSearchService;
     private SpectrumIndexService spectrumIndexService;
@@ -31,7 +32,6 @@ public class ProjectSpectraIndexer {
     }
 
     public void indexAllSpectraForProjectAndAssay(String projectAccession, String assayAccession, File mgfFile){
-        LinkedList<Spectrum> spectra = new LinkedList<Spectrum>();
 
         long startTime;
         long endTime;

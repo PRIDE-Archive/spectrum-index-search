@@ -26,16 +26,19 @@ public class SpectrumJmzReaderMapper {
         if (jmzReaderSpectrum.getPrecursorIntensity()!= null) res.setPrecursorIntensity(jmzReaderSpectrum.getPrecursorIntensity());
         if (jmzReaderSpectrum.getMsLevel()!= null) res.setMsLevel(jmzReaderSpectrum.getMsLevel());
 
-        double[] peaksIntensities = new double[jmzReaderSpectrum.getPeakList().size()];
-        double[] peaksMz = new double[jmzReaderSpectrum.getPeakList().size()];
-        int i = 0;
-        for (Map.Entry<Double, Double> peakEntry: jmzReaderSpectrum.getPeakList().entrySet()) {
-            peaksIntensities[i] = peakEntry.getValue();
-            peaksMz[i]= peakEntry.getKey();
-            i++;
+        if (jmzReaderSpectrum.getPeakList()!=null && jmzReaderSpectrum.getPeakList()!= null) {
+            double[] peaksIntensities = new double[jmzReaderSpectrum.getPeakList().size()];
+            double[] peaksMz = new double[jmzReaderSpectrum.getPeakList().size()];
+            int i = 0;
+            for (Map.Entry<Double, Double> peakEntry : jmzReaderSpectrum.getPeakList().entrySet()) {
+                peaksIntensities[i] = peakEntry.getValue();
+                peaksMz[i] = peakEntry.getKey();
+                i++;
+            }
+            res.setPeaksIntensities(peaksIntensities);
+            res.setPeaksMz(peaksMz);
+            res.setNumPeaks(peaksMz.length);
         }
-        res.setPeaksIntensities(peaksIntensities);
-        res.setPeaksMz(peaksMz);
         return res;
     }
 }

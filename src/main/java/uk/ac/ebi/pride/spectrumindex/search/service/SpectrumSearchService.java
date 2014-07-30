@@ -30,13 +30,9 @@ public class SpectrumSearchService {
 
     // find by ID methods
     public List<Spectrum> findById(String id) {
+//        return solrSpectrumRepository.findById(SpectrumIdCleaner.getCleanSpectrumId(id));
         return solrSpectrumRepository.findById(id);
     }
-
-    public List<Spectrum> findById(Collection<String> ids) {
-        return solrSpectrumRepository.findByIdIn(ids);
-    }
-
 
     // find by project accession methods
     public Page<Spectrum> findByProjectAccession(String projectAccession, Pageable pageable) {

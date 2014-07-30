@@ -19,6 +19,7 @@ import uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepos
 import uk.ac.ebi.pride.tools.mgf_parser.MgfFile;
 
 import java.io.File;
+import java.util.List;
 
 public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
 
@@ -31,6 +32,7 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
 
     private static final int NUM_RESULTS_PER_PAGE = 100;
     private static final String SPECTRUM_1_ID = "id=PXD000021;PRIDE_Exp_Complete_Ac_27179.xml;spectrum=0";
+//    private static final String SPECTRUM_1_ID = "id_PXD000021_PRIDE_Exp_Complete_Ac_27179_xml_spectrum_0";
     private static final String PROJECT_1_ACCESSION = "PXD000021";
     private static final String PROJECT_1_ASSAY_1 = "27179";
 
@@ -73,14 +75,13 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
 
         projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_1_ACCESSION, PROJECT_1_ASSAY_1, new File(PATH_TO_MGF));
 
-        Page<Spectrum> page = spectrumSearchService.findByProjectAccession(PROJECT_1_ACCESSION, new PageRequest(0, NUM_RESULTS_PER_PAGE));
-        assertEquals(NUM_RESULTS_PER_PAGE, page.getSize());
+        List<Spectrum> res = spectrumSearchService.findById("*"+SPECTRUM_1_ID);
+        assertEquals(1, res.size());
 
-        Spectrum firstSpectrum = page.getContent().get(0);
+        Spectrum firstSpectrum = res.get(0);
 
         assertEquals(PROJECT_1_ACCESSION, firstSpectrum.getProjectAccession());
         assertEquals(PROJECT_1_ASSAY_1, firstSpectrum.getAssayAccession());
-//        assertEquals(SPECTRUM_1_ID, firstSpectrum.getId());
         assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksMz().length);
         assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksIntensities().length);
         assertTrue(FIRST_PEAK_MZ==firstSpectrum.getPeaksMz()[0]);

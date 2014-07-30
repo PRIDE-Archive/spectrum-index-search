@@ -17,4 +17,5 @@ public class SpectrumFields {
     public static final String IDENTIFIED_SPECTRA = "identified_spectra";
     public static final String MS_LEVEL = "ms_level";
     public static final String RETENTION_TIME = "retention_time";
+    public static final String NUM_PEAKS = "num_peaks";
 }

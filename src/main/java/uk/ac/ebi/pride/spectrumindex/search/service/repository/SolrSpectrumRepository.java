@@ -22,9 +22,6 @@ public interface SolrSpectrumRepository extends SolrCrudRepository<Spectrum, Str
     // ID query methods
     @Query("id:?0")
     List<Spectrum> findById(String id);
-    @Query("id:?0")
-    List<Spectrum> findByIdIn(Collection<String> id);
-
 
     // Project accession methods
     @Query("project_accession:?0")

@@ -53,6 +53,17 @@ public class Spectrum {
     @Field(SpectrumFields.RETENTION_TIME)
     private List<Long> retentionTime;
 
+    @Field(SpectrumFields.NUM_PEAKS)
+    private long numPeaks;
+
+    public long getNumPeaks() {
+        return numPeaks;
+    }
+
+    public void setNumPeaks(long numPeaks) {
+        this.numPeaks = numPeaks;
+    }
+
     public List<Long> getRetentionTime() {
         return retentionTime;
     }
