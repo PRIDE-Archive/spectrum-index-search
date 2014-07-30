@@ -108,6 +108,8 @@
         <field name="precursor_mz" type="double" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="precursor_intensity" type="double" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="identified_spectra" type="boolean" indexed="true" stored="true" required="false" multiValued="false"/>
+        <field name="retention_time" type="double" indexed="true" stored="true" required="false" multiValued="true"/>
+        <field name="num_peaks" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
 
 
         <!-- catchall field, containing all other searchable text fields (implemented

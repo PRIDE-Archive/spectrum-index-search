@@ -54,13 +54,13 @@ public class Spectrum {
     private List<Long> retentionTime;
 
     @Field(SpectrumFields.NUM_PEAKS)
-    private long numPeaks;
+    private int numPeaks;
 
-    public long getNumPeaks() {
+    public int getNumPeaks() {
         return numPeaks;
     }
 
-    public void setNumPeaks(long numPeaks) {
+    public void setNumPeaks(int numPeaks) {
         this.numPeaks = numPeaks;
     }
 
