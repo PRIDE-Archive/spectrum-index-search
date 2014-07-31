@@ -75,7 +75,7 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
 
         projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_1_ACCESSION, PROJECT_1_ASSAY_1, new File(PATH_TO_MGF));
 
-        List<Spectrum> res = spectrumSearchService.findById("*"+SPECTRUM_1_ID);
+        List<Spectrum> res = spectrumSearchService.findById(SPECTRUM_1_ID);
         assertEquals(1, res.size());
 
         Spectrum firstSpectrum = res.get(0);
