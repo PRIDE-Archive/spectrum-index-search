@@ -18,7 +18,7 @@ public class SpectrumJmzReaderMapper {
     public static uk.ac.ebi.pride.spectrumindex.search.model.Spectrum createSolrSpectrum(String projectAccession, String assayAccession, Ms2Query jmzReaderSpectrum) {
         Spectrum res = new Spectrum();
 
-        res.setId(jmzReaderSpectrum.getTitle());
+        res.setId(jmzReaderSpectrum.getTitle().substring(3)); // remove 'íd=' from the title
         res.setProjectAccession(projectAccession);
         res.setAssayAccession(assayAccession);
         if (jmzReaderSpectrum.getPrecursorCharge()!=null) res.setPrecursorCharge(jmzReaderSpectrum.getPrecursorCharge());

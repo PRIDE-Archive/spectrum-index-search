@@ -51,7 +51,7 @@
     <properties>
         <archive.repo.version>0.1.17-SNAPSHOT</archive.repo.version>
         <archive.data.provider.api.version>2.0.1-SNAPSHOT</archive.data.provider.api.version>
-        <mgf.parser.version>1.2.6</mgf.parser.version>
+        <mgf.parser.version>1.2.8</mgf.parser.version>
     </properties>
 
     <build>

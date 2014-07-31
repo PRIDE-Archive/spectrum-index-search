@@ -31,7 +31,7 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
     private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexerTest.class);
 
     private static final int NUM_RESULTS_PER_PAGE = 100;
-    private static final String SPECTRUM_1_ID = "id=PXD000021;PRIDE_Exp_Complete_Ac_27179.xml;spectrum=0";
+    private static final String SPECTRUM_1_ID = "PXD000021;PRIDE_Exp_Complete_Ac_27179.xml;spectrum=0";
 //    private static final String SPECTRUM_1_ID = "id_PXD000021_PRIDE_Exp_Complete_Ac_27179_xml_spectrum_0";
     private static final String PROJECT_1_ACCESSION = "PXD000021";
     private static final String PROJECT_1_ASSAY_1 = "27179";
