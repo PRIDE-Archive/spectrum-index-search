@@ -20,6 +20,7 @@ import java.util.*;
  */
 public class ProjectSpectraIndexer {
 
+    private static final int NUM_TRIES = 5;
     private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexer.class.getName());
 
     private static final int INDEXING_SIZE_STEP = 100;
@@ -48,15 +49,19 @@ public class ProjectSpectraIndexer {
                 Spectrum solrSpectrum = SpectrumJmzReaderMapper.createSolrSpectrum(projectAccession, assayAccession, spectrum);
                 spectraToIndex.add(solrSpectrum);
                 if (spectraToIndex.size() >= INDEXING_SIZE_STEP) {
-                    try {
-                        spectrumIndexService.save(spectraToIndex);
-                        spectraToIndex = new LinkedList<Spectrum>();
-                    } catch (UncategorizedSolrException e) {
-                        logger.info("There are server problems: " + e.getCause());
-                        logger.info("Re-trying in 5 seconds...");
-                        wait5Secs();
-                        spectrumIndexService.save(spectraToIndex);
-                        spectraToIndex = new LinkedList<Spectrum>();
+                    int numTries = 0;
+                    boolean succeed = false;
+                    while (numTries<NUM_TRIES && !succeed) {
+                        try {
+                            spectrumIndexService.save(spectraToIndex);
+                            spectraToIndex = new LinkedList<Spectrum>();
+                            succeed = true;
+                        } catch (UncategorizedSolrException e) {
+                            logger.info("[TRY "+ numTries + "] There are server problems: " + e.getCause());
+                            logger.info("Re-trying in 5 seconds...");
+                            wait5Secs();
+                        }
+                        numTries++;
                     }
                 }
             }
