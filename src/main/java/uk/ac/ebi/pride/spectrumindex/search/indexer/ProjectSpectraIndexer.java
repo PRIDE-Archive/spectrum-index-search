@@ -2,6 +2,7 @@ package uk.ac.ebi.pride.spectrumindex.search.indexer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.solr.UncategorizedSolrException;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumIndexService;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumSearchService;
@@ -47,8 +48,16 @@ public class ProjectSpectraIndexer {
                 Spectrum solrSpectrum = SpectrumJmzReaderMapper.createSolrSpectrum(projectAccession, assayAccession, spectrum);
                 spectraToIndex.add(solrSpectrum);
                 if (spectraToIndex.size() >= INDEXING_SIZE_STEP) {
-                    spectrumIndexService.save(spectraToIndex);
-                    spectraToIndex = new LinkedList<Spectrum>();
+                    try {
+                        spectrumIndexService.save(spectraToIndex);
+                        spectraToIndex = new LinkedList<Spectrum>();
+                    } catch (UncategorizedSolrException e) {
+                        logger.info("There are server problems: " + e.getCause());
+                        logger.info("Re-trying in 5 seconds...");
+                        wait5Secs();
+                        spectrumIndexService.save(spectraToIndex);
+                        spectraToIndex = new LinkedList<Spectrum>();
+                    }
                 }
             }
             spectrumIndexService.save(spectraToIndex);
@@ -61,6 +70,14 @@ public class ProjectSpectraIndexer {
         endTime = System.currentTimeMillis();
         logger.info("DONE indexing all PSMs for project " + projectAccession + " in " + (double) (endTime - startTime) / 1000.0 + " seconds");
 
+    }
+
+    private void wait5Secs() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
     }
 
     public void deleteAllPsmsForProject(String projectAccession) {
