@@ -39,11 +39,11 @@ public class SpectrumIndexService {
             int i = 0;
             for (Spectrum spectrum: spectra) {
 //                spectrum.setId(SpectrumIdCleaner.getCleanSpectrumId(spectrum.getId()));
-                logger.info("Saving Spectra " + i + " with ID: " + spectrum.getId());
-                logger.info("Project: " + spectrum.getProjectAccession());
-                logger.info("Assay: " + spectrum.getAssayAccession());
-                logger.info("Num PeaksI: " + spectrum.getPeaksIntensities().length);
-                logger.info("Num PeaksM: " + spectrum.getPeaksMz().length);
+                logger.debug("Saving Spectra " + i + " with ID: " + spectrum.getId());
+                logger.debug("Project: " + spectrum.getProjectAccession());
+                logger.debug("Assay: " + spectrum.getAssayAccession());
+                logger.debug("Num PeaksI: " + spectrum.getPeaksIntensities().length);
+                logger.debug("Num PeaksM: " + spectrum.getPeaksMz().length);
                 i++;
             }
             solrSpectrumRepository.save(spectra);
