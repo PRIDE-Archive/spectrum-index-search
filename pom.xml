@@ -10,7 +10,7 @@
     <groupId>uk.ac.ebi.pride</groupId>
     <artifactId>spectrum-index-search</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <name>spectrum-index-search</name>
     <url>http://maven.apache.org</url>
 

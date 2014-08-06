@@ -1,5 +1,8 @@
 package uk.ac.ebi.pride.spectrumindex.search.indexer;
 
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.SolrPingResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.solr.UncategorizedSolrException;
@@ -12,6 +15,7 @@ import uk.ac.ebi.pride.tools.mgf_parser.MgfFile;
 import uk.ac.ebi.pride.tools.mgf_parser.model.Ms2Query;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -20,18 +24,22 @@ import java.util.*;
  */
 public class ProjectSpectraIndexer {
 
-    private static final int NUM_TRIES = 5;
-    private static final int SECONDS_TO_WAIT = 5;
+    private static final int NUM_TRIES = 10;
+    private static final int SECONDS_TO_WAIT = 30;
+    private static final long MAX_ELAPSED_TIME_PING_QUERY = 10000;
     private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexer.class.getName());
 
     private static final int INDEXING_SIZE_STEP = 100;
 
     private SpectrumSearchService spectrumSearchService;
     private SpectrumIndexService spectrumIndexService;
+    private SolrServer spectrumSolrServer;
 
-    public ProjectSpectraIndexer(SpectrumSearchService spectrumSearchService, SpectrumIndexService spectrumIndexService) {
+
+    public ProjectSpectraIndexer(SpectrumSearchService spectrumSearchService, SpectrumIndexService spectrumIndexService, SolrServer spectrumSolrServer) {
         this.spectrumSearchService = spectrumSearchService;
         this.spectrumIndexService = spectrumIndexService;
+        this.spectrumSolrServer = spectrumSolrServer;
     }
 
     public void indexAllSpectraForProjectAndAssay(String projectAccession, String assayAccession, File mgfFile){
@@ -54,13 +62,24 @@ public class ProjectSpectraIndexer {
                     boolean succeed = false;
                     while (numTries<NUM_TRIES && !succeed) {
                         try {
-                            spectrumIndexService.save(spectraToIndex);
-                            spectraToIndex = new LinkedList<Spectrum>();
-                            succeed = true;
+                            SolrPingResponse pingResponse = this.spectrumSolrServer.ping();
+                            if ((pingResponse.getStatus() == 0) && pingResponse.getElapsedTime() < MAX_ELAPSED_TIME_PING_QUERY) {
+                                spectrumIndexService.save(spectraToIndex);
+                                spectraToIndex = new LinkedList<Spectrum>();
+                                succeed = true;
+                            } else {
+                                logger.info("Solr server too busy!");
+                                logger.info("PING response status: " + pingResponse.getStatus());
+                                logger.info("PING elapsed time: " + pingResponse.getElapsedTime());
+                            }
                         } catch (UncategorizedSolrException e) {
                             logger.info("[TRY " + numTries + "] There are server problems: " + e.getCause());
                             logger.info("Re-trying in "+ SECONDS_TO_WAIT + " seconds...");
                             waitSecs();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (SolrServerException e) {
+                            e.printStackTrace();
                         }
                         numTries++;
                     }

@@ -55,7 +55,8 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
         projectSpectraIndexer =
                 new ProjectSpectraIndexer(
                         spectrumSearchService,
-                        spectrumIndexService
+                        spectrumIndexService,
+                        server
                 );
 
     }

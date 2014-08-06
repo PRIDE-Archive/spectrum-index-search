@@ -1,5 +1,6 @@
 package uk.ac.ebi.pride.spectrumindex.search.tools;
 
+import org.apache.solr.client.solrj.SolrServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class SpectrumIndexBuilder {
 
     private static final String INTERNAL_FOLDER_NAME = ProjectFileSource.INTERNAL.getFolderName();
     private static final String GENERATED_FOLDER_NAME = ProjectFileSource.GENERATED.getFolderName();
+
+    @Autowired
+    private SolrServer spectrumSolrServer;
 
     @Autowired
     private File submissionsDirectory;
@@ -94,7 +98,7 @@ public class SpectrumIndexBuilder {
         logger.info("DONE!");
 
         // create the indexer
-        ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexBuilder.spectrumSearchService, spectrumIndexBuilder.spectrumIndexService);
+        ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexBuilder.spectrumSearchService, spectrumIndexBuilder.spectrumIndexService, spectrumIndexBuilder.spectrumSolrServer);
 
         // iterate through project to index spectra
         logger.info("Indexing spectra...");
@@ -114,7 +118,7 @@ public class SpectrumIndexBuilder {
         logger.info("DONE!");
 
         // create the indexer
-        ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexBuilder.spectrumSearchService, spectrumIndexBuilder.spectrumIndexService);
+        ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexBuilder.spectrumSearchService, spectrumIndexBuilder.spectrumIndexService, spectrumIndexBuilder.spectrumSolrServer);
 
         // iterate through project to index spectra
         logger.info("Indexing spectra...");
