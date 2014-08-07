@@ -58,34 +58,12 @@ public class ProjectSpectraIndexer {
                 Spectrum solrSpectrum = SpectrumJmzReaderMapper.createSolrSpectrum(projectAccession, assayAccession, spectrum);
                 spectraToIndex.add(solrSpectrum);
                 if (spectraToIndex.size() >= INDEXING_SIZE_STEP) {
-                    int numTries = 0;
-                    boolean succeed = false;
-                    while (numTries<NUM_TRIES && !succeed) {
-                        try {
-                            SolrPingResponse pingResponse = this.spectrumSolrServer.ping();
-                            if ((pingResponse.getStatus() == 0) && pingResponse.getElapsedTime() < MAX_ELAPSED_TIME_PING_QUERY) {
-                                spectrumIndexService.save(spectraToIndex);
-                                spectraToIndex = new LinkedList<Spectrum>();
-                                succeed = true;
-                            } else {
-                                logger.info("Solr server too busy!");
-                                logger.info("PING response status: " + pingResponse.getStatus());
-                                logger.info("PING elapsed time: " + pingResponse.getElapsedTime());
-                            }
-                        } catch (UncategorizedSolrException e) {
-                            logger.info("[TRY " + numTries + "] There are server problems: " + e.getCause());
-                            logger.info("Re-trying in "+ SECONDS_TO_WAIT + " seconds...");
-                            waitSecs();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (SolrServerException e) {
-                            e.printStackTrace();
-                        }
-                        numTries++;
+                    if (tryToSave(spectraToIndex)) {
+                        spectraToIndex = new LinkedList<Spectrum>();
                     }
                 }
             }
-            spectrumIndexService.save(spectraToIndex);
+            tryToSave(spectraToIndex);
 
         } catch (JMzReaderException e) {
             e.printStackTrace();
@@ -93,8 +71,42 @@ public class ProjectSpectraIndexer {
 
 
         endTime = System.currentTimeMillis();
-        logger.info("DONE indexing all PSMs for project " + projectAccession + " in " + (double) (endTime - startTime) / 1000.0 + " seconds");
+        logger.info("DONE indexing all PSMs for assay " + assayAccession + " in project " + projectAccession + " in " + (double) (endTime - startTime) / 1000.0 + " seconds");
 
+    }
+
+
+    private boolean tryToSave(List<Spectrum> spectraToIndex) {
+        int numTries = 0;
+        boolean succeed = false;
+        while (numTries<NUM_TRIES && !succeed) {
+            try {
+                SolrPingResponse pingResponse = this.spectrumSolrServer.ping();
+                if ((pingResponse.getStatus() == 0) && pingResponse.getElapsedTime() < MAX_ELAPSED_TIME_PING_QUERY) {
+                    spectrumIndexService.save(spectraToIndex);
+                    succeed = true;
+                } else {
+                    logger.info("Solr server too busy!");
+                    logger.info("PING response status: " + pingResponse.getStatus());
+                    logger.info("PING elapsed time: " + pingResponse.getElapsedTime());
+                }
+            } catch (UncategorizedSolrException e) {
+                logger.info("[TRY " + numTries + "] There are server problems: " + e.getCause());
+                logger.info("Re-trying in "+ SECONDS_TO_WAIT + " seconds...");
+                waitSecs();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (SolrServerException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                logger.info("[TRY " + numTries + "] There are UNKNOWN problems: " + e.getCause());
+                logger.info("Re-trying in "+ SECONDS_TO_WAIT + " seconds...");
+                waitSecs();
+            }
+            numTries++;
+        }
+
+        return succeed;
     }
 
     private void waitSecs() {
@@ -104,6 +116,7 @@ public class ProjectSpectraIndexer {
             e1.printStackTrace();
         }
     }
+
 
     public void deleteAllPsmsForProject(String projectAccession) {
 
