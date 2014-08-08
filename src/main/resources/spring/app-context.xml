@@ -69,6 +69,7 @@
 
     <bean id="spectrumIndexService" class="uk.ac.ebi.pride.spectrumindex.search.service.SpectrumIndexService">
         <constructor-arg value="#{ solrSpectrumRepositoryFactory.create() }"/>
+        <constructor-arg name="spectrumSolrServer" ref="spectrumSolrServer"/>
     </bean>
 
     <!-- property files -->

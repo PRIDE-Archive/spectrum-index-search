@@ -51,12 +51,11 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
         solrSpectrumRepositoryFactory = new SolrSpectrumRepositoryFactory(new SolrTemplate(server));
         SolrSpectrumRepository solrSpectrumRepository = solrSpectrumRepositoryFactory.create();
         spectrumSearchService = new SpectrumSearchService(solrSpectrumRepository);
-        spectrumIndexService = new SpectrumIndexService(solrSpectrumRepository);
+        spectrumIndexService = new SpectrumIndexService(solrSpectrumRepository, server);
         projectSpectraIndexer =
                 new ProjectSpectraIndexer(
                         spectrumSearchService,
-                        spectrumIndexService,
-                        server
+                        spectrumIndexService
                 );
 
     }
