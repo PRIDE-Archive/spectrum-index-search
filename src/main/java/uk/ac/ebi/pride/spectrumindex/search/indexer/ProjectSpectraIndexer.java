@@ -58,7 +58,9 @@ public class ProjectSpectraIndexer {
                     }
                 }
             }
-            this.spectrumIndexService.reliableSave(spectraToIndex);
+            if (spectraToIndex.size()>0) { // Finally... the last bit
+                this.spectrumIndexService.reliableSave(spectraToIndex);
+            }
 
         } catch (JMzReaderException e) {
             e.printStackTrace();

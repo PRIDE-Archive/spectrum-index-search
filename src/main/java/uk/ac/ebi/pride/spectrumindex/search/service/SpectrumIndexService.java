@@ -86,39 +86,46 @@ public class SpectrumIndexService {
     }
 
     public boolean reliableSave(Collection<Spectrum> spectraToIndex) {
-        int numTries = 0;
-        boolean succeed = false;
-        while (numTries<NUM_TRIES && !succeed) {
-            try {
-                SolrPingResponse pingResponse = this.spectrumSolrServer.ping();
-                if ((pingResponse.getStatus() == 0) && pingResponse.getElapsedTime() < MAX_ELAPSED_TIME_PING_QUERY) {
-                    this.spectrumSolrServer.addBeans(spectraToIndex);
-                    this.spectrumSolrServer.commit();
-                    succeed = true;
-                } else {
-                    logger.info("[TRY " + numTries + " Solr server too busy!");
-                    logger.info("PING response status: " + pingResponse.getStatus());
-                    logger.info("PING elapsed time: " + pingResponse.getElapsedTime());
-                    logger.info("Re-trying in " + SECONDS_TO_WAIT + " seconds...");
+        if (spectraToIndex!= null && spectraToIndex.size()>0) {
+            int numTries = 0;
+            boolean succeed = false;
+            while (numTries < NUM_TRIES && !succeed) {
+                try {
+                    SolrPingResponse pingResponse = this.spectrumSolrServer.ping();
+                    if ((pingResponse.getStatus() == 0) && pingResponse.getElapsedTime() < MAX_ELAPSED_TIME_PING_QUERY) {
+                        this.spectrumSolrServer.addBeans(spectraToIndex);
+                        this.spectrumSolrServer.commit();
+                        succeed = true;
+                    } else {
+                        logger.info("[TRY " + numTries + " Solr server too busy!");
+                        logger.info("PING response status: " + pingResponse.getStatus());
+                        logger.info("PING elapsed time: " + pingResponse.getElapsedTime());
+                        logger.info("Re-trying in " + SECONDS_TO_WAIT + " seconds...");
+                        waitSecs();
+                    }
+                } catch (SolrServerException e) {
+                    logger.error("[TRY " + numTries + "] There are server problems: " + e.getCause());
+                    logger.error("Re-trying in " + SECONDS_TO_WAIT + " seconds...");
+                    waitSecs();
+                } catch (UncategorizedSolrException e) {
+                    logger.error("[TRY " + numTries + "] There are server problems: " + e.getCause());
+                    logger.error("Re-trying in " + SECONDS_TO_WAIT + " seconds...");
+                    waitSecs();
+                } catch (Exception e) {
+                    logger.error("[TRY " + numTries + "] There are UNKNOWN problems: " + e.getCause());
+                    e.printStackTrace();
+                    logger.error("Re-trying in " + SECONDS_TO_WAIT + " seconds...");
                     waitSecs();
                 }
-            } catch (SolrServerException e) {
-                logger.error("[TRY " + numTries + "] There are server problems: " + e.getCause());
-                logger.error("Re-trying in " + SECONDS_TO_WAIT + " seconds...");
-                waitSecs();
-            } catch (UncategorizedSolrException e) {
-                logger.error("[TRY " + numTries + "] There are server problems: " + e.getCause());
-                logger.error("Re-trying in " + SECONDS_TO_WAIT + " seconds...");
-                waitSecs();
-            } catch (Exception e) {
-                logger.error("[TRY " + numTries + "] There are UNKNOWN problems: " + e.getCause());
-                logger.error("Re-trying in " + SECONDS_TO_WAIT + " seconds...");
-                waitSecs();
+                numTries++;
             }
-            numTries++;
-        }
 
-        return succeed;
+            return succeed;
+        } else {
+            logger.error("SpectrumIndexService [reliable-save]: Trying to save empty spectra!");
+
+            return false;
+        }
     }
 
     private void waitSecs() {
