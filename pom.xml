@@ -52,7 +52,7 @@
         <archive.repo.version>0.1.19</archive.repo.version>
         <archive.data.provider.api.version>2.0.6</archive.data.provider.api.version>
         <mgf.parser.version>1.2.8</mgf.parser.version>
-        <archive.utils.version>0.1.10</archive.utils.version>
+        <archive.utils.version>0.1.11</archive.utils.version>
         <accession.resolver.version>1.0.1</accession.resolver.version>
     </properties>
 
