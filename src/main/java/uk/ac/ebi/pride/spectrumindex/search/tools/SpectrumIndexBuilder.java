@@ -98,7 +98,7 @@ public class SpectrumIndexBuilder {
         logger.info("DONE!");
 
         // create the indexer
-        ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexBuilder.spectrumSearchService, spectrumIndexBuilder.spectrumIndexService);
+        ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexBuilder.spectrumSearchService, spectrumIndexBuilder.spectrumIndexService, 100);
 
         // iterate through project to index spectra
         logger.info("Indexing spectra...");
@@ -118,7 +118,7 @@ public class SpectrumIndexBuilder {
         logger.info("DONE!");
 
         // create the indexer
-        ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexBuilder.spectrumSearchService, spectrumIndexBuilder.spectrumIndexService);
+        ProjectSpectraIndexer projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexBuilder.spectrumSearchService, spectrumIndexBuilder.spectrumIndexService, 100);
 
         // iterate through project to index spectra
         logger.info("Indexing spectra...");

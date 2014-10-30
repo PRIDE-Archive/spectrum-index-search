@@ -1,11 +1,7 @@
 package uk.ac.ebi.pride.spectrumindex.search.indexer;
 
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.SolrPingResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.solr.UncategorizedSolrException;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumIndexService;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumSearchService;
@@ -15,8 +11,8 @@ import uk.ac.ebi.pride.tools.mgf_parser.MgfFile;
 import uk.ac.ebi.pride.tools.mgf_parser.model.Ms2Query;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Jose A. Dianes
@@ -26,15 +22,16 @@ public class ProjectSpectraIndexer {
 
     private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexer.class.getName());
 
-    private static final int INDEXING_SIZE_STEP = 100;
+    private int indexingSizeStep;
 
     private SpectrumSearchService spectrumSearchService;
     private SpectrumIndexService spectrumIndexService;
 
 
-    public ProjectSpectraIndexer(SpectrumSearchService spectrumSearchService, SpectrumIndexService spectrumIndexService) {
+    public ProjectSpectraIndexer(SpectrumSearchService spectrumSearchService, SpectrumIndexService spectrumIndexService, int indexingSizeStep) {
         this.spectrumSearchService = spectrumSearchService;
         this.spectrumIndexService = spectrumIndexService;
+        this.indexingSizeStep = indexingSizeStep;
     }
 
     public void indexAllSpectraForProjectAndAssay(String projectAccession, String assayAccession, File mgfFile){
@@ -52,7 +49,7 @@ public class ProjectSpectraIndexer {
                 Ms2Query spectrum = (Ms2Query) inputParser.getSpectrumByIndex(i);
                 Spectrum solrSpectrum = SpectrumJmzReaderMapper.createSolrSpectrum(projectAccession, assayAccession, spectrum);
                 spectraToIndex.add(solrSpectrum);
-                if (spectraToIndex.size() >= INDEXING_SIZE_STEP) {
+                if (spectraToIndex.size() >= indexingSizeStep) {
                     if (this.spectrumIndexService.reliableSave(spectraToIndex)) {
                         spectraToIndex = new LinkedList<Spectrum>();
                     }

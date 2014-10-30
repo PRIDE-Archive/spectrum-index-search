@@ -8,15 +8,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.solr.core.SolrTemplate;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumIndexService;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumSearchService;
 import uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepository;
 import uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepositoryFactory;
-import uk.ac.ebi.pride.tools.mgf_parser.MgfFile;
 
 import java.io.File;
 import java.util.List;
@@ -55,7 +52,8 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
         projectSpectraIndexer =
                 new ProjectSpectraIndexer(
                         spectrumSearchService,
-                        spectrumIndexService
+                        spectrumIndexService,
+                        100
                 );
 
     }
