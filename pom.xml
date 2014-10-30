@@ -49,9 +49,11 @@
     </organization>
 
     <properties>
-        <archive.repo.version>0.1.17-SNAPSHOT</archive.repo.version>
-        <archive.data.provider.api.version>2.0.1-SNAPSHOT</archive.data.provider.api.version>
+        <archive.repo.version>0.1.19</archive.repo.version>
+        <archive.data.provider.api.version>2.0.6</archive.data.provider.api.version>
         <mgf.parser.version>1.2.8</mgf.parser.version>
+        <archive.utils.version>0.1.10</archive.utils.version>
+        <accession.resolver.version>1.0.1</accession.resolver.version>
     </properties>
 
     <build>
@@ -243,14 +245,14 @@
         <dependency>
             <groupId>uk.ac.ebi.pride.archive</groupId>
             <artifactId>archive-utils</artifactId>
-            <version>0.1.10</version>
+            <version>${archive.utils.version}</version>
         </dependency>
 
         <!-- pride utils for cleaning protein accessions -->
         <dependency>
             <groupId>uk.ac.ebi.pride.tools</groupId>
             <artifactId>accession-resolver</artifactId>
-            <version>1.0.1</version>
+            <version>${accession.resolver.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>log4j</groupId>
