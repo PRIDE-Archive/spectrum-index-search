@@ -11,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 import uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepository;
 
-import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Jose A. Dianes
@@ -32,6 +30,9 @@ public class SpectrumIndexService {
     private SolrSpectrumRepository solrSpectrumRepository;
     private SolrServer spectrumSolrServer;
 
+    public SpectrumIndexService() {
+    }
+
     public SpectrumIndexService(SolrSpectrumRepository solrSpectrumRepository, SolrServer spectrumSolrServer) {
         this.solrSpectrumRepository = solrSpectrumRepository;
         this.spectrumSolrServer = spectrumSolrServer;
@@ -41,19 +42,18 @@ public class SpectrumIndexService {
         this.solrSpectrumRepository = solrSpectrumRepository;
     }
 
+    @Transactional
     public void save(Spectrum spectrum) {
-        // fix the accession of needed
-//        spectrum.setId(SpectrumIdCleaner.getCleanSpectrumId(spectrum.getId()));
         solrSpectrumRepository.save(spectrum);
     }
 
+    @Transactional
     public void save(Iterable<Spectrum> spectra) {
         if (spectra==null || !spectra.iterator().hasNext())
             logger.debug("No Spectrum to save");
         else {
             int i = 0;
             for (Spectrum spectrum: spectra) {
-//                spectrum.setId(SpectrumIdCleaner.getCleanSpectrumId(spectrum.getId()));
                 logger.debug("Saving Spectra " + i + " with ID: " + spectrum.getId());
                 logger.debug("Project: " + spectrum.getProjectAccession());
                 logger.debug("Assay: " + spectrum.getAssayAccession());
@@ -65,36 +65,41 @@ public class SpectrumIndexService {
         }
     }
 
+    @Transactional
     public void delete(Spectrum spectrum){
         solrSpectrumRepository.delete(spectrum);
     }
 
-    public void delete(Iterable<Spectrum> psms){
-        if (psms==null || !psms.iterator().hasNext())
+    @Transactional
+    public void delete(Iterable<Spectrum> spectra){
+        if (spectra==null || !spectra.iterator().hasNext())
             logger.debug("No Spectra to delete");
         else {
-            solrSpectrumRepository.delete(psms);
+            solrSpectrumRepository.delete(spectra);
         }
     }
 
+    @Transactional
     public void deleteAll() {
         solrSpectrumRepository.deleteAll();
     }
 
+    @Transactional
     public void deleteByProjectId(String projectAccession) {
         solrSpectrumRepository.deleteByProjectAccession(projectAccession);
     }
 
-    public boolean reliableSave(Collection<Spectrum> spectraToIndex) {
-        if (spectraToIndex!= null && spectraToIndex.size()>0) {
+    @Transactional
+    public boolean reliableSave(Collection<Spectrum> spectra) {
+        if (spectra!= null && spectra.size()>0) {
             int numTries = 0;
             boolean succeed = false;
             while (numTries < NUM_TRIES && !succeed) {
                 try {
                     SolrPingResponse pingResponse = this.spectrumSolrServer.ping();
                     if ((pingResponse.getStatus() == 0) && pingResponse.getElapsedTime() < MAX_ELAPSED_TIME_PING_QUERY) {
-                        this.spectrumSolrServer.addBeans(spectraToIndex);
-                        this.spectrumSolrServer.commit();
+                        //We leave solr to handle internally the commit in a maximum of 4 min
+                        this.spectrumSolrServer.addBeans(spectra, 480000);
                         succeed = true;
                     } else {
                         logger.info("[TRY " + numTries + " Solr server too busy!");

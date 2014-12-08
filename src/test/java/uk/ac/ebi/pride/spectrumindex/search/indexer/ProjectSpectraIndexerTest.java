@@ -20,16 +20,14 @@ import java.util.List;
 
 public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
 
+    private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexerTest.class);
 
     private static final String PATH_TO_MGF = "src/test/resources/submissions/PXD000021/PRIDE_Exp_Complete_Ac_27179.pride.mgf";
     private static final int NUM_PEAKS_SPECTRUM_1 = 269;
     private static final double FIRST_PEAK_MZ = 160.028;
     private static final double FIRST_PEAK_INTENSITY = 1.082;
-    private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexerTest.class);
 
-    private static final int NUM_RESULTS_PER_PAGE = 100;
     private static final String SPECTRUM_1_ID = "PXD000021;PRIDE_Exp_Complete_Ac_27179.xml;spectrum=0";
-//    private static final String SPECTRUM_1_ID = "id_PXD000021_PRIDE_Exp_Complete_Ac_27179_xml_spectrum_0";
     private static final String PROJECT_1_ACCESSION = "PXD000021";
     private static final String PROJECT_1_ASSAY_1 = "27179";
 
@@ -39,12 +37,13 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
     private ProjectSpectraIndexer projectSpectraIndexer;
     private SpectrumIndexService spectrumIndexService;
     private SpectrumSearchService spectrumSearchService;
+    private SolrServer server;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        SolrServer server = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
+        server = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
         solrSpectrumRepositoryFactory = new SolrSpectrumRepositoryFactory(new SolrTemplate(server));
         SolrSpectrumRepository solrSpectrumRepository = solrSpectrumRepositoryFactory.create();
         spectrumSearchService = new SpectrumSearchService(solrSpectrumRepository);
@@ -72,6 +71,8 @@ public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
     public void testIndexMgf() throws Exception {
 
         projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_1_ACCESSION, PROJECT_1_ASSAY_1, new File(PATH_TO_MGF));
+        //We force the commit for testing purposes (avoids wait four minutes)
+        server.commit();
 
         List<Spectrum> res = spectrumSearchService.findById(SPECTRUM_1_ID);
         assertEquals(1, res.size());

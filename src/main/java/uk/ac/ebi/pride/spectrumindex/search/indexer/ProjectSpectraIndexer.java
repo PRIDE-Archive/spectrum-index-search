@@ -65,7 +65,7 @@ public class ProjectSpectraIndexer {
 
 
         endTime = System.currentTimeMillis();
-        logger.info("DONE indexing all PSMs for assay " + assayAccession + " in project " + projectAccession + " in " + (double) (endTime - startTime) / 1000.0 + " seconds");
+        logger.info("DONE indexing all spectra for assay " + assayAccession + " in project " + projectAccession + " in " + (double) (endTime - startTime) / 1000.0 + " seconds");
 
     }
 
