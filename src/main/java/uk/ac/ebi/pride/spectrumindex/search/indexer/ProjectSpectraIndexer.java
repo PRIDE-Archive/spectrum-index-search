@@ -45,6 +45,8 @@ public class ProjectSpectraIndexer {
             MgfFile inputParser = new MgfFile(mgfFile);
             List<Spectrum> spectraToIndex = new LinkedList<Spectrum>();
             logger.info("There are " + inputParser.getSpectraCount() + " spectra to index");
+            logger.info("Spectra index size step: " + indexingSizeStep);
+
             for (int i=1; i<=inputParser.getSpectraCount();i++) {
                 Ms2Query spectrum = (Ms2Query) inputParser.getSpectrumByIndex(i);
                 Spectrum solrSpectrum = SpectrumJmzReaderMapper.createSolrSpectrum(projectAccession, assayAccession, spectrum);
