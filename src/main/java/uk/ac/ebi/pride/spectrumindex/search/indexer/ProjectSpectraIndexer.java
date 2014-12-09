@@ -78,4 +78,7 @@ public class ProjectSpectraIndexer {
 
     }
 
+    public void setIndexingSizeStep(int indexingSizeStep) {
+        this.indexingSizeStep = indexingSizeStep;
+    }
 }
