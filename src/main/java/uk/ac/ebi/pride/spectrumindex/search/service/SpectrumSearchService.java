@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 import uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepository;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -39,14 +38,21 @@ public class SpectrumSearchService {
         return solrSpectrumRepository.findByProjectAccession(projectAccession, pageable);
     }
 
+    public Long countByProjectAccession(String projectAccession) {
+        return  solrSpectrumRepository.countByProjectAccession(projectAccession);
+    }
+
     public Page<Spectrum> findByProjectAccession(Collection<String> projectAccessions, Pageable pageable) {
         return solrSpectrumRepository.findByProjectAccessionIn(projectAccessions, pageable);
     }
 
-
     // find by assay accession methods
     public Page<Spectrum> findByAssayAccession(String assayAccession, Pageable pageable) {
         return solrSpectrumRepository.findByAssayAccession(assayAccession, pageable);
+    }
+
+    public Long countByAssayAccession(String assayAccession) {
+        return solrSpectrumRepository.countByAssayAccession(assayAccession);
     }
 
     public Page<Spectrum> findByAssayAccession(Collection<String> assayAccessions, Pageable pageable) {
