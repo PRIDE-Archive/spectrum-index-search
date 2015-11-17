@@ -265,6 +265,7 @@
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>oracle-thin</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!--MGF parsing-->
