@@ -127,7 +127,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>2.5.3</version>
                 <configuration>
                     <remoteTagging>true</remoteTagging>
                     <goals>deploy</goals>
@@ -295,9 +295,10 @@
     </repositories>
 
     <scm>
-        <connection>scm:svn:https://svn.ebi.ac.uk/pride-repo/spectrum-index/spectrum-index-search/trunk</connection>
-        <developerConnection>scm:svn:https://svn.ebi.ac.uk/pride-repo/spectrum-index/spectrum-index-search/trunk</developerConnection>
-        <url>https://svn.ebi.ac.uk/pride-repo/spectrum-index/spectrum-index-search/trunk</url>
+        <connection>scm:git:https://github.com/PRIDE-Archive/spectrum-index-service.git</connection>
+        <developerConnection>scm:git:https://github.com/PRIDE-Archive/spectrum-index-service.git</developerConnection>
+        <url>scm:git:https://github.com/PRIDE-Archive/spectrum-index-service.git</url>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
