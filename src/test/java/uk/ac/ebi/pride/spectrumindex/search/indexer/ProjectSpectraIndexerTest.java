@@ -27,12 +27,13 @@ public class ProjectSpectraIndexerTest {
 
     private static final String PATH_TO_MGF = "src/test/resources/submissions/PXD000021/PRIDE_Exp_Complete_Ac_27179.pride.mgf";
     private static final int NUM_PEAKS_SPECTRUM_1 = 269;
-    private static final double FIRST_PEAK_MZ = 262.602;
-    private static final double FIRST_PEAK_INTENSITY = 5.806;
-
+    private static final double PRECURSOR_MZ = 412.76431;
+    private static final double PRECURSOR_INTENSITY = 0.0;
+    private static final int PRECURSOR_CHARGE = 2;
     private static final String SPECTRUM_1_ID = "PXD000021;PRIDE_Exp_Complete_Ac_27179.xml;spectrum=0";
     private static final String PROJECT_1_ACCESSION = "PXD000021";
     private static final String PROJECT_1_ASSAY_1 = "27179";
+
     private ProjectSpectraIndexer projectSpectraIndexer;
 
     @Resource
@@ -64,8 +65,9 @@ public class ProjectSpectraIndexerTest {
         assertEquals(PROJECT_1_ASSAY_1, firstSpectrum.getAssayAccession());
         assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksMz().length);
         assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksIntensities().length);
-        assertTrue(FIRST_PEAK_MZ==firstSpectrum.getPeaksMz()[0]);
-        assertTrue(FIRST_PEAK_INTENSITY==firstSpectrum.getPeaksIntensities()[0]);
+        assertTrue(PRECURSOR_MZ==firstSpectrum.getPrecursorMz());
+        assertTrue(PRECURSOR_INTENSITY==firstSpectrum.getPrecursorIntensity());
+        assertTrue(PRECURSOR_CHARGE==firstSpectrum.getPrecursorCharge());
 
     }
 }
