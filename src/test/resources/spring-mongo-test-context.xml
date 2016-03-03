@@ -27,7 +27,6 @@
     <!--or localhost configuration if you have your mongo db -->
     <!--<mongo:mongo id="mongo" host="127.0.0.1" port="27017" />-->
 
-
     <!--Default database name-->
     <mongo:db-factory id="mongoDbFactory" dbname="db" />
 
