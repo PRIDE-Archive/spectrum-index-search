@@ -209,6 +209,13 @@
             <version>${mgf.parser.version}</version>
         </dependency>
 
+        <!--Splash Spectral Hash Identifier-->
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.splash</groupId>
+            <artifactId>core</artifactId>
+            <version>1.4</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit-dep</artifactId>
@@ -238,6 +245,11 @@
         <repository>
             <id>spring-maven-snapshot</id>
             <url>http://repo.springsource.org/libs-snapshot</url>
+        </repository>
+        <repository>
+            <id>releases</id>
+            <name>Fiehnlab Mave Repository - Releases</name>
+            <url>http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/</url>
         </repository>
     </repositories>
 

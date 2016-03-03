@@ -48,8 +48,8 @@ public class ProjectSpectraIndexer {
 
             for (int i=1; i<=inputParser.getSpectraCount();i++) {
                 Ms2Query spectrum = (Ms2Query) inputParser.getSpectrumByIndex(i);
-                Spectrum solrSpectrum = SpectrumJmzReaderMapper.createMongoSpectrum(projectAccession, assayAccession, spectrum);
-                spectraToIndex.add(solrSpectrum);
+                Spectrum mongoSpectrum = SpectrumJmzReaderMapper.createMongoSpectrum(projectAccession, assayAccession, spectrum);
+                spectraToIndex.add(mongoSpectrum);
                 if (spectraToIndex.size() >= indexingSizeStep) {
                     this.spectrumIndexService.save(spectraToIndex);
                     spectraToIndex = new LinkedList<Spectrum>();

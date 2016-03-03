@@ -39,6 +39,8 @@ public class Spectrum {
 
     private int numPeaks;
 
+    //Hash for spectrum
+    private String splash;
 
     public String getId() {
         return id;
@@ -134,6 +136,15 @@ public class Spectrum {
 
     public void setNumPeaks(int numPeaks) {
         this.numPeaks = numPeaks;
+    }
+
+    //For the future. Maybe the splash can be use for the equals and hash if it is working
+    public String getSplash() {
+        return splash;
+    }
+
+    public void setSplash(String splash) {
+        this.splash = splash;
     }
 
     @Override

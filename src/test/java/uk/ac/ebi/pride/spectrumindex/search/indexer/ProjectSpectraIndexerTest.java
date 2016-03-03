@@ -33,6 +33,7 @@ public class ProjectSpectraIndexerTest {
     private static final String SPECTRUM_1_ID = "PXD000021;PRIDE_Exp_Complete_Ac_27179.xml;spectrum=0";
     private static final String PROJECT_1_ACCESSION = "PXD000021";
     private static final String PROJECT_1_ASSAY_1 = "27179";
+    private static final String SPLASH = "splash10-z100000000-547b773a253acd1da5bb";
 
     private ProjectSpectraIndexer projectSpectraIndexer;
 
@@ -68,6 +69,7 @@ public class ProjectSpectraIndexerTest {
         assertTrue(PRECURSOR_MZ==firstSpectrum.getPrecursorMz());
         assertTrue(PRECURSOR_INTENSITY==firstSpectrum.getPrecursorIntensity());
         assertTrue(PRECURSOR_CHARGE==firstSpectrum.getPrecursorCharge());
+        assertTrue(SPLASH.equals(firstSpectrum.getSplash()));
 
     }
 }
