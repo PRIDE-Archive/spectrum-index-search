@@ -1,91 +1,75 @@
 package uk.ac.ebi.pride.spectrumindex.search.indexer;
 
-import org.apache.solr.SolrTestCaseJ4;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumIndexService;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumSearchService;
-import uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepository;
-import uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepositoryFactory;
 
+import javax.annotation.Resource;
 import java.io.File;
-import java.util.List;
 
-public class ProjectSpectraIndexerTest extends SolrTestCaseJ4 {
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:spring-mongo-test-context.xml"})
+public class ProjectSpectraIndexerTest {
 
     private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexerTest.class);
 
+
     private static final String PATH_TO_MGF = "src/test/resources/submissions/PXD000021/PRIDE_Exp_Complete_Ac_27179.pride.mgf";
     private static final int NUM_PEAKS_SPECTRUM_1 = 269;
-    private static final double FIRST_PEAK_MZ = 160.028;
-    private static final double FIRST_PEAK_INTENSITY = 1.082;
-
+    private static final double PRECURSOR_MZ = 412.76431;
+    private static final double PRECURSOR_INTENSITY = 0.0;
+    private static final int PRECURSOR_CHARGE = 2;
     private static final String SPECTRUM_1_ID = "PXD000021;PRIDE_Exp_Complete_Ac_27179.xml;spectrum=0";
     private static final String PROJECT_1_ACCESSION = "PXD000021";
     private static final String PROJECT_1_ASSAY_1 = "27179";
-
-
-    private SolrSpectrumRepositoryFactory solrSpectrumRepositoryFactory;
+    private static final String SPLASH = "splash10-z100000000-547b773a253acd1da5bb";
 
     private ProjectSpectraIndexer projectSpectraIndexer;
+
+    @Resource
     private SpectrumIndexService spectrumIndexService;
+    @Resource
     private SpectrumSearchService spectrumSearchService;
-    private SolrServer server;
 
     @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        server = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
-        solrSpectrumRepositoryFactory = new SolrSpectrumRepositoryFactory(new SolrTemplate(server));
-        SolrSpectrumRepository solrSpectrumRepository = solrSpectrumRepositoryFactory.create();
-        spectrumSearchService = new SpectrumSearchService(solrSpectrumRepository);
-        spectrumIndexService = new SpectrumIndexService(solrSpectrumRepository, server);
+    public void setup() throws Exception {
+
         projectSpectraIndexer =
-                new ProjectSpectraIndexer(
-                        spectrumSearchService,
-                        spectrumIndexService,
-                        100
-                );
+            new ProjectSpectraIndexer(
+                    spectrumIndexService,
+                    100
+            );
 
     }
 
-    @BeforeClass
-    public static void initialise() throws Exception {
-        initCore("src/test/resources/solr/collection1/conf/solrconfig.xml",
-                "src/test/resources/solr/collection1/conf/schema.xml",
-                "src/test/resources/solr");
-
-
-
-    }
 
     @Test
     public void testIndexMgf() throws Exception {
 
         projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_1_ACCESSION, PROJECT_1_ASSAY_1, new File(PATH_TO_MGF));
         //We force the commit for testing purposes (avoids wait four minutes)
-        server.commit();
 
-        List<Spectrum> res = spectrumSearchService.findById(SPECTRUM_1_ID);
-        assertEquals(1, res.size());
-
-        Spectrum firstSpectrum = res.get(0);
+        Spectrum firstSpectrum  = spectrumSearchService.findById(SPECTRUM_1_ID);
 
         assertEquals(PROJECT_1_ACCESSION, firstSpectrum.getProjectAccession());
         assertEquals(PROJECT_1_ASSAY_1, firstSpectrum.getAssayAccession());
         assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksMz().length);
         assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksIntensities().length);
-        assertTrue(FIRST_PEAK_MZ==firstSpectrum.getPeaksMz()[0]);
-        assertTrue(FIRST_PEAK_INTENSITY==firstSpectrum.getPeaksIntensities()[0]);
+        assertTrue(PRECURSOR_MZ==firstSpectrum.getPrecursorMz());
+        assertTrue(PRECURSOR_INTENSITY==firstSpectrum.getPrecursorIntensity());
+        assertTrue(PRECURSOR_CHARGE==firstSpectrum.getPrecursorCharge());
+        assertTrue(SPLASH.equals(firstSpectrum.getSplash()));
 
     }
-
 }

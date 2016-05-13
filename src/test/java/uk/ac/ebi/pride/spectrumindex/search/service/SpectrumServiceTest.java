@@ -6,25 +6,23 @@ package uk.ac.ebi.pride.spectrumindex.search.service;
  * @version $Id$
  */
 
-import org.apache.solr.SolrTestCaseJ4;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.params.SolrParams;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.data.solr.core.SolrTemplate;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
-import uk.ac.ebi.pride.spectrumindex.search.model.SpectrumFields;
-import uk.ac.ebi.pride.spectrumindex.search.service.repository.SolrSpectrumRepositoryFactory;
 
-import java.util.List;
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
-public class SpectrumServiceTest extends SolrTestCaseJ4 {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:spring-mongo-test-context.xml")
+public class SpectrumServiceTest {
 
 
     // SPECTRUM 1 test data
@@ -43,38 +41,34 @@ public class SpectrumServiceTest extends SolrTestCaseJ4 {
     private static final String ASSAY_2_1_ACCESSION = "ASSAY-2-1-ACCESSION";
     private static final String ASSAY_2_2_ACCESSION = "ASSAY-2-2-ACCESSION";
 
-    private SolrServer server;
-    private SolrSpectrumRepositoryFactory solrSpectrumRepositoryFactory;
 
     public static final long ZERO_DOCS = 0L;
     public static final long SINGLE_DOC = 1L;
 
-    @BeforeClass
-    public static void initialise() throws Exception {
-        initCore("src/test/resources/solr/collection1/conf/solrconfig.xml",
-                "src/test/resources/solr/collection1/conf/schema.xml",
-                "src/test/resources/solr");
-    }
+
+    @Resource
+    private SpectrumIndexService spectrumIndexService;
+
+    @Resource
+    private SpectrumSearchService spectrumSearchService;
+
 
     @Before
-    @Override
     public void setUp() throws Exception {
-        super.setUp();
-        server = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
-
-        solrSpectrumRepositoryFactory = new SolrSpectrumRepositoryFactory(new SolrTemplate(server));
-
         // delete all data
         deleteAllData();
         // insert test data
         insertTestData();
 
-        //We force the commit for testing purposes (avoids wait one minute)
-        server.commit();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        // delete all data
+        deleteAllData();
     }
 
     private void deleteAllData() {
-        SpectrumIndexService spectrumIndexService = new SpectrumIndexService(solrSpectrumRepositoryFactory.create(), server);
         spectrumIndexService.deleteAll();
     }
 
@@ -84,40 +78,17 @@ public class SpectrumServiceTest extends SolrTestCaseJ4 {
         addSpectrum_3();
     }
 
-    @Test
-    public void testThatNoResultsAreReturned() throws SolrServerException {
-        SolrParams params = new SolrQuery("text that is not found");
-        QueryResponse response = server.query(params);
-        assertEquals(ZERO_DOCS, response.getResults().getNumFound());
-    }
-
-    @Test
-    public void testSearchByAccessionUsingQuery() throws Exception {
-
-        SolrParams params = new SolrQuery(SpectrumFields.ID + ":" + SPECTRUM_1_ID);
-        QueryResponse response = server.query(params);
-        assertEquals(SINGLE_DOC, response.getResults().getNumFound());
-        assertEquals(SPECTRUM_1_ID, response.getResults().get(0).get(SpectrumFields.ID));
-
-    }
 
     @Test
     public void testSearchById() {
-        SpectrumSearchService spectrumSearchService = new SpectrumSearchService(solrSpectrumRepositoryFactory.create());
+        Spectrum spectrum = spectrumSearchService.findById(SPECTRUM_1_ID);
 
-        List<Spectrum> spectrums = spectrumSearchService.findById(SPECTRUM_1_ID);
-
-        assertNotNull(spectrums);
-        assertEquals(1, spectrums.size());
-
-        Spectrum spectrum1 = spectrums.get(0);
-        assertEquals(SPECTRUM_1_ID, spectrum1.getId());
+        assertNotNull(spectrum);
+        assertEquals(SPECTRUM_1_ID, spectrum.getId());
     }
 
     @Test
     public void testCountProjectAccession() throws Exception {
-        SpectrumSearchService spectrumSearchService = new SpectrumSearchService(solrSpectrumRepositoryFactory.create());
-
         assertEquals((Long) 1L,  spectrumSearchService.countByProjectAccession(PROJECT_1_ACCESSION));
         assertEquals((Long) 2L,  spectrumSearchService.countByProjectAccession(PROJECT_2_ACCESSION));
 
@@ -125,9 +96,6 @@ public class SpectrumServiceTest extends SolrTestCaseJ4 {
 
     @Test
     public void testCountAssayAccession() throws Exception {
-
-        SpectrumSearchService spectrumSearchService = new SpectrumSearchService(solrSpectrumRepositoryFactory.create());
-
         assertEquals((Long) 1L,  spectrumSearchService.countByAssayAccession(ASSAY_1_1_ACCESSION));
         assertEquals((Long) 1L,  spectrumSearchService.countByAssayAccession(ASSAY_2_1_ACCESSION));
         assertEquals((Long) 1L,  spectrumSearchService.countByAssayAccession(ASSAY_2_2_ACCESSION));
@@ -142,7 +110,6 @@ public class SpectrumServiceTest extends SolrTestCaseJ4 {
         spectrum.setProjectAccession(PROJECT_1_ACCESSION);
         spectrum.setAssayAccession(ASSAY_1_1_ACCESSION);
 
-        SpectrumIndexService spectrumIndexService = new SpectrumIndexService(this.solrSpectrumRepositoryFactory.create(), server);
         spectrumIndexService.save(spectrum);
     }
 
@@ -153,7 +120,6 @@ public class SpectrumServiceTest extends SolrTestCaseJ4 {
         spectrum.setProjectAccession(PROJECT_2_ACCESSION);
         spectrum.setAssayAccession(ASSAY_2_1_ACCESSION);
 
-        SpectrumIndexService spectrumIndexService = new SpectrumIndexService(this.solrSpectrumRepositoryFactory.create(), server);
         spectrumIndexService.save(spectrum);
     }
 
@@ -164,7 +130,6 @@ public class SpectrumServiceTest extends SolrTestCaseJ4 {
         spectrum.setProjectAccession(PROJECT_2_ACCESSION);
         spectrum.setAssayAccession(ASSAY_2_2_ACCESSION);
 
-        SpectrumIndexService spectrumIndexService = new SpectrumIndexService(this.solrSpectrumRepositoryFactory.create(), server);
         spectrumIndexService.save(spectrum);
 
     }

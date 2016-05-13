@@ -1,76 +1,46 @@
 package uk.ac.ebi.pride.spectrumindex.search.model;
 
-import org.apache.solr.client.solrj.beans.Field;
-import org.apache.commons.codec.binary.Base64;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Jose A. Dianes
  * @version $Id$
- *
  */
+@Document(collection = "spectra")
 public class Spectrum {
 
-    /**
-     * Defines the number of bytes required in an UNENCODED byte array to hold
-     * a dingle double value.
-     */
-    public static final int BYTES_TO_HOLD_DOUBLE = 8;
 
-    @Field(SpectrumFields.ID)
+    @Id
     private String id;
 
-    @Field(SpectrumFields.PROJECT_ACCESSION)
     private String projectAccession;
 
-    @Field(SpectrumFields.ASSAY_ACCESSION)
     private String assayAccession;
 
-    @Field(SpectrumFields.MS_LEVEL)
-    private int msLevel;
-
-    @Field(SpectrumFields.PRECURSOR_CHARGE)
     private int precursorCharge;
 
-    @Field(SpectrumFields.PRECURSOR_MZ)
     private double precursorMz;
 
-    @Field(SpectrumFields.PRECURSOR_INTENSITY)
     private double precursorIntensity;
 
-    @Field(SpectrumFields.IDENTIFIED_SPECTRA)
-    private boolean identifiedSpectra;
+    private int msLevel;
 
-    @Field(SpectrumFields.PEAKS_INTENSITIES)
-    private String peaksIntensities;
-
-    @Field(SpectrumFields.PEAKS_MZ)
-    private String peaksMz;
-
-    @Field(SpectrumFields.RETENTION_TIME)
     private List<Long> retentionTime;
 
-    @Field(SpectrumFields.NUM_PEAKS)
+    private boolean identifiedSpectra;
+
+    private double[] peaksIntensities;
+
+    private double[] peaksMz;
+
     private int numPeaks;
 
-    public int getNumPeaks() {
-        return numPeaks;
-    }
-
-    public void setNumPeaks(int numPeaks) {
-        this.numPeaks = numPeaks;
-    }
-
-    public List<Long> getRetentionTime() {
-        return retentionTime;
-    }
-
-    public void setRetentionTime(List<Long> retentionTime) {
-        this.retentionTime = retentionTime;
-    }
+    //Hash for spectrum
+    private String splash;
 
     public String getId() {
         return id;
@@ -120,6 +90,22 @@ public class Spectrum {
         this.precursorIntensity = precursorIntensity;
     }
 
+    public int getMsLevel() {
+        return msLevel;
+    }
+
+    public void setMsLevel(int msLevel) {
+        this.msLevel = msLevel;
+    }
+
+    public List<Long> getRetentionTime() {
+        return retentionTime;
+    }
+
+    public void setRetentionTime(List<Long> retentionTime) {
+        this.retentionTime = retentionTime;
+    }
+
     public boolean isIdentifiedSpectra() {
         return identifiedSpectra;
     }
@@ -129,69 +115,48 @@ public class Spectrum {
     }
 
     public double[] getPeaksIntensities() {
-        return fromBytesStringToDoubles(this.peaksIntensities);
+        return this.peaksIntensities;
     }
 
     public void setPeaksIntensities(double[] peaksIntensities) {
-        this.peaksIntensities = fromDoublesToBytesString(peaksIntensities);
+        this.peaksIntensities = peaksIntensities;
     }
 
     public double[] getPeaksMz() {
-       return fromBytesStringToDoubles(this.peaksMz);
+        return this.peaksMz;
     }
 
     public void setPeaksMz(double[] peaksMz) {
-        this.peaksMz = fromDoublesToBytesString(peaksMz);
+        this.peaksMz = peaksMz;
     }
 
-    private double[] fromBytesStringToDoubles(String bytesString) {
-        byte[] bytesArray = Base64.decodeBase64(bytesString);
-        ByteBuffer bytes = ByteBuffer.wrap(bytesArray);
-        bytes.order(ByteOrder.LITTLE_ENDIAN);
-        double[] res = new double[bytesArray.length/BYTES_TO_HOLD_DOUBLE];
-        int j=0;
-        for (int i=0; i<bytesArray.length; i=i+BYTES_TO_HOLD_DOUBLE) {
-            res[j] = bytes.getDouble(i);
-            j++;
-        }
-        return res;
+    public int getNumPeaks() {
+        return numPeaks;
     }
 
-    private byte[] fromDoublesToBytes(double[] doubles) {
-        ByteBuffer buffer = ByteBuffer.allocate(doubles.length * BYTES_TO_HOLD_DOUBLE);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-        for (double aDouble: doubles) {
-            buffer.putDouble(aDouble);
-        }
-        return buffer.array();
+    public void setNumPeaks(int numPeaks) {
+        this.numPeaks = numPeaks;
     }
 
-    private double[] fromBytesToDoubles(byte[] bytesArray) {
-        ByteBuffer bytes = ByteBuffer.wrap(bytesArray);
-        bytes.order(ByteOrder.LITTLE_ENDIAN);
-        double[] res = new double[bytesArray.length/BYTES_TO_HOLD_DOUBLE];
-        int j=0;
-        for (int i=0; i<bytesArray.length; i=i+BYTES_TO_HOLD_DOUBLE) {
-            res[j] = bytes.getDouble(i);
-            j++;
-        }
-        return res;
+    //For the future. Maybe the splash can be use for the equals and hash if it is working
+    public String getSplash() {
+        return splash;
     }
 
-    private String fromDoublesToBytesString(double[] doubles) {
-        ByteBuffer buffer = ByteBuffer.allocate(doubles.length * BYTES_TO_HOLD_DOUBLE);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-        for (double aDouble: doubles) {
-            buffer.putDouble(aDouble);
-        }
-        return Base64.encodeBase64String(buffer.array());
+    public void setSplash(String splash) {
+        this.splash = splash;
     }
 
-    public void setMsLevel(int msLevel) {
-        this.msLevel = msLevel;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Spectrum)) return false;
+        Spectrum spectrum = (Spectrum) o;
+        return Objects.equals(id, spectrum.id);
     }
 
-    public int getMsLevel() {
-        return msLevel;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

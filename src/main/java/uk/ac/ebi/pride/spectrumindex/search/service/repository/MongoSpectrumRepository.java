@@ -2,8 +2,8 @@ package uk.ac.ebi.pride.spectrumindex.search.service.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.repository.Query;
-import org.springframework.data.solr.repository.SolrCrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 
 import java.util.Collection;
@@ -15,29 +15,25 @@ import java.util.List;
  *
  * Note: using the Query annotation allows wildcards to go straight into the query
  */
-public interface SolrSpectrumRepository extends SolrCrudRepository<Spectrum, String> {
-
-    // ToDo: add count methods
-
-    // ID query methods
-    @Query("id:?0")
-    List<Spectrum> findById(String id);
+@Repository
+public interface MongoSpectrumRepository extends MongoRepository<Spectrum, String> {
 
     // Project accession methods
-    @Query("project_accession:?0")
     Page<Spectrum> findByProjectAccession(String projectAccession, Pageable pageable);
+
+    //For deleting documents, it is not exposed to the users
+    List<Spectrum> findByProjectAccession(String projectAccession);
+
     Long countByProjectAccession(String projectAccession);
 
-    @Query("project_accession:(?0)")
     Page<Spectrum> findByProjectAccessionIn(Collection<String> projectAccessions, Pageable pageable);
 
     // Assay accession methods
-    @Query("assay_accession:?0")
     Page<Spectrum> findByAssayAccession(String assayAccession, Pageable pageable);
+
     Long countByAssayAccession(String assayAccession);
 
-    @Query("assay_accession:(?0)")
     Page<Spectrum> findByAssayAccessionIn(Collection<String> assayAccessions, Pageable pageable);
 
-    void deleteByProjectAccession(String projectAccession);
+//    void deleteByProjectAccession(String projectAccession);  It is not available in this version of spring-data-monogodb; implemented in the index-service
 }

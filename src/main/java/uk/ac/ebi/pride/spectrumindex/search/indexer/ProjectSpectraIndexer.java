@@ -4,12 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumIndexService;
-import uk.ac.ebi.pride.spectrumindex.search.service.SpectrumSearchService;
 import uk.ac.ebi.pride.spectrumindex.search.util.SpectrumJmzReaderMapper;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mgf_parser.MgfFile;
 import uk.ac.ebi.pride.tools.mgf_parser.model.Ms2Query;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,12 +24,11 @@ public class ProjectSpectraIndexer {
 
     private int indexingSizeStep;
 
-    private SpectrumSearchService spectrumSearchService;
+    @Resource
     private SpectrumIndexService spectrumIndexService;
 
 
-    public ProjectSpectraIndexer(SpectrumSearchService spectrumSearchService, SpectrumIndexService spectrumIndexService, int indexingSizeStep) {
-        this.spectrumSearchService = spectrumSearchService;
+    public ProjectSpectraIndexer(SpectrumIndexService spectrumIndexService, int indexingSizeStep) {
         this.spectrumIndexService = spectrumIndexService;
         this.indexingSizeStep = indexingSizeStep;
     }
@@ -49,16 +48,15 @@ public class ProjectSpectraIndexer {
 
             for (int i=1; i<=inputParser.getSpectraCount();i++) {
                 Ms2Query spectrum = (Ms2Query) inputParser.getSpectrumByIndex(i);
-                Spectrum solrSpectrum = SpectrumJmzReaderMapper.createSolrSpectrum(projectAccession, assayAccession, spectrum);
-                spectraToIndex.add(solrSpectrum);
+                Spectrum mongoSpectrum = SpectrumJmzReaderMapper.createMongoSpectrum(projectAccession, assayAccession, spectrum);
+                spectraToIndex.add(mongoSpectrum);
                 if (spectraToIndex.size() >= indexingSizeStep) {
-                    if (this.spectrumIndexService.reliableSave(spectraToIndex)) {
-                        spectraToIndex = new LinkedList<Spectrum>();
-                    }
+                    this.spectrumIndexService.save(spectraToIndex);
+                    spectraToIndex = new LinkedList<Spectrum>();
                 }
             }
             if (spectraToIndex.size()>0) { // Finally... the last bit
-                this.spectrumIndexService.reliableSave(spectraToIndex);
+                this.spectrumIndexService.save(spectraToIndex);
             }
 
         } catch (JMzReaderException e) {
@@ -72,10 +70,8 @@ public class ProjectSpectraIndexer {
     }
 
 
-    public void deleteAllPsmsForProject(String projectAccession) {
-
-        this.spectrumIndexService.deleteByProjectId(projectAccession);
-
+    public void deleteAllSpectraForProject(String projectAccession) {
+        this.spectrumIndexService.deleteByProjectAccession(projectAccession);
     }
 
     public void setIndexingSizeStep(int indexingSizeStep) {
