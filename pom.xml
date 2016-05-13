@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -11,7 +10,7 @@
     <groupId>uk.ac.ebi.pride</groupId>
     <artifactId>spectrum-index-search</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.3-SNAPSHOT</version>
+    <version>2.0.0</version>
     <name>spectrum-index-search</name>
     <url>http://maven.apache.org</url>
 
@@ -227,7 +226,7 @@
         <connection>scm:git:https://github.com/PRIDE-Archive/spectrum-index-service.git</connection>
         <developerConnection>scm:git:https://github.com/PRIDE-Archive/spectrum-index-service.git</developerConnection>
         <url>scm:git:https://github.com/PRIDE-Archive/spectrum-index-service.git</url>
-        <tag>HEAD</tag>
+        <tag>spectrum-index-search-2.0.0</tag>
     </scm>
 
 </project>
