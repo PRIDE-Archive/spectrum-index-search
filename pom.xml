@@ -191,8 +191,7 @@
 
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version>4.10</version>
+            <artifactId>junit</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.hamcrest</groupId>
