@@ -24,7 +24,6 @@ public class ProjectSpectraIndexerTest {
 
     private static Logger logger = LoggerFactory.getLogger(ProjectSpectraIndexerTest.class);
 
-
     private static final String PATH_TO_MGF = "src/test/resources/submissions/PXD000021/PRIDE_Exp_Complete_Ac_27179.pride.mgf";
     private static final int NUM_PEAKS_SPECTRUM_1 = 269;
     private static final double PRECURSOR_MZ = 412.76431;
@@ -33,7 +32,7 @@ public class ProjectSpectraIndexerTest {
     private static final String SPECTRUM_1_ID = "PXD000021;PRIDE_Exp_Complete_Ac_27179.xml;spectrum=0";
     private static final String PROJECT_1_ACCESSION = "PXD000021";
     private static final String PROJECT_1_ASSAY_1 = "27179";
-    private static final String SPLASH = "splash10-z100000000-547b773a253acd1da5bb";
+    private static final String SPLASH = "splash10-0udi-9000000000-547b773a253acd1da5bb";
 
     private ProjectSpectraIndexer projectSpectraIndexer;
 
@@ -44,24 +43,14 @@ public class ProjectSpectraIndexerTest {
 
     @Before
     public void setup() throws Exception {
-
-        projectSpectraIndexer =
-            new ProjectSpectraIndexer(
-                    spectrumIndexService,
-                    100
-            );
-
+        projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexService, 100);
     }
-
 
     @Test
     public void testIndexMgf() throws Exception {
-
         projectSpectraIndexer.indexAllSpectraForProjectAndAssay(PROJECT_1_ACCESSION, PROJECT_1_ASSAY_1, new File(PATH_TO_MGF));
         //We force the commit for testing purposes (avoids wait four minutes)
-
         Spectrum firstSpectrum  = spectrumSearchService.findById(SPECTRUM_1_ID);
-
         assertEquals(PROJECT_1_ACCESSION, firstSpectrum.getProjectAccession());
         assertEquals(PROJECT_1_ASSAY_1, firstSpectrum.getAssayAccession());
         assertEquals(NUM_PEAKS_SPECTRUM_1, firstSpectrum.getPeaksMz().length);
@@ -70,6 +59,5 @@ public class ProjectSpectraIndexerTest {
         assertTrue(PRECURSOR_INTENSITY==firstSpectrum.getPrecursorIntensity());
         assertTrue(PRECURSOR_CHARGE==firstSpectrum.getPrecursorCharge());
         assertTrue(SPLASH.equals(firstSpectrum.getSplash()));
-
     }
 }
