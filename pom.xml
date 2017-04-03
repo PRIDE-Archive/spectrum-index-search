@@ -8,7 +8,7 @@
     </parent>
 
     <groupId>uk.ac.ebi.pride</groupId>
-    <artifactId>spectrum-index-search</artifactId>
+    <artifactId>spectrum-index-service</artifactId>
     <packaging>jar</packaging>
     <version>2.0.2-SNAPSHOT</version>
     <name>spectrum-index-search</name>
