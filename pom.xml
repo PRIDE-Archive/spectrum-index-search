@@ -8,7 +8,7 @@
     </parent>
 
     <groupId>uk.ac.ebi.pride</groupId>
-    <artifactId>spectrum-index-service</artifactId>
+    <artifactId>spectrum-index-search</artifactId>
     <packaging>jar</packaging>
     <version>2.0.3-SNAPSHOT</version>
     <name>spectrum-index-search</name>
@@ -132,6 +132,7 @@
             </exclusions>
         </dependency>
 
+        <!-- mongo java driver, compatibility version -->
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
@@ -196,9 +197,9 @@
     </repositories>
 
     <scm>
-        <connection>scm:git:https://github.com/PRIDE-Archive/spectrum-index-service.git</connection>
-        <developerConnection>scm:git:https://github.com/PRIDE-Archive/spectrum-index-service.git</developerConnection>
-        <url>scm:git:https://github.com/PRIDE-Archive/spectrum-index-service.git</url>
+        <connection>scm:git:https://github.com/PRIDE-Archive/spectrum-index-search.git</connection>
+        <developerConnection>scm:git:https://github.com/PRIDE-Archive/spectrum-index-search.git</developerConnection>
+        <url>scm:git:https://github.com/PRIDE-Archive/spectrum-index-search.git</url>
         <tag>HEAD</tag>
     </scm>
 
