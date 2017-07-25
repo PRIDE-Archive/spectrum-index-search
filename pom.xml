@@ -20,7 +20,7 @@
     -->
 
     <properties>
-        <mgf.parser.version>1.3.7</mgf.parser.version>
+        <jmzreader.version>2.0.2-SNAPSHOT</jmzreader.version>
     </properties>
 
     <build>
@@ -157,8 +157,8 @@
         <!--MGF parsing-->
         <dependency>
             <groupId>uk.ac.ebi.pride.tools</groupId>
-            <artifactId>mgf-parser</artifactId>
-            <version>${mgf.parser.version}</version>
+            <artifactId>jmzreader</artifactId>
+            <version>${jmzreader.version}</version>
         </dependency>
 
         <!--Splash Spectral Hash Identifier-->
