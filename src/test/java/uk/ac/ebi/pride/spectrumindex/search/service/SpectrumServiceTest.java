@@ -119,3 +119,4 @@ public class SpectrumServiceTest {
   }
 }
 // todo JavaDoc
+// todo review warnings
