@@ -9,52 +9,49 @@ import uk.ac.ebi.pride.spectrumindex.search.service.repository.MongoSpectrumRepo
 import javax.annotation.Resource;
 import java.util.Collection;
 
-/**
- * @author Jose A. Dianes
- * @version $Id$
- *
- */
 @Service
 public class SpectrumSearchService {
 
-    @Resource
-    private MongoSpectrumRepository mongoSpectrumRepository;
+  @Resource private MongoSpectrumRepository mongoSpectrumRepository;
 
-    public SpectrumSearchService() {
-    }
+  public SpectrumSearchService() {}
 
-    public void setMongoSpectrumRepository(MongoSpectrumRepository mongoSpectrumRepository) {
-        this.mongoSpectrumRepository = mongoSpectrumRepository;
-    }
+  public void setMongoSpectrumRepository(MongoSpectrumRepository mongoSpectrumRepository) {
+    this.mongoSpectrumRepository = mongoSpectrumRepository;
+  }
 
-    // find by ID methods
-    public Spectrum findById(String id) {
-        return mongoSpectrumRepository.findOne(id);
-    }
+  // find by ID methods
+  public Spectrum findById(String id) {
+    return mongoSpectrumRepository.findById(id).orElse(new Spectrum());
+  }
 
-    // find by project accession methods
-    public Page<Spectrum> findByProjectAccession(String projectAccession, Pageable pageable) {
-        return mongoSpectrumRepository.findByProjectAccession(projectAccession, pageable);
-    }
+  // find by project accession methods
+  public Page<Spectrum> findByProjectAccession(String projectAccession, Pageable pageable) {
+    return mongoSpectrumRepository.findByProjectAccession(projectAccession, pageable);
+  }
 
-    public Long countByProjectAccession(String projectAccession) {
-        return  mongoSpectrumRepository.countByProjectAccession(projectAccession);
-    }
+  @SuppressWarnings("WeakerAccess")
+  public Long countByProjectAccession(String projectAccession) {
+    return mongoSpectrumRepository.countByProjectAccession(projectAccession);
+  }
 
-    public Page<Spectrum> findByProjectAccession(Collection<String> projectAccessions, Pageable pageable) {
-        return mongoSpectrumRepository.findByProjectAccessionIn(projectAccessions, pageable);
-    }
+  public Page<Spectrum> findByProjectAccession(
+      Collection<String> projectAccessions, Pageable pageable) {
+    return mongoSpectrumRepository.findByProjectAccessionIn(projectAccessions, pageable);
+  }
 
-    // find by assay accession methods
-    public Page<Spectrum> findByAssayAccession(String assayAccession, Pageable pageable) {
-        return mongoSpectrumRepository.findByAssayAccession(assayAccession, pageable);
-    }
+  // find by assay accession methods
+  public Page<Spectrum> findByAssayAccession(String assayAccession, Pageable pageable) {
+    return mongoSpectrumRepository.findByAssayAccession(assayAccession, pageable);
+  }
 
-    public Long countByAssayAccession(String assayAccession) {
-        return mongoSpectrumRepository.countByAssayAccession(assayAccession);
-    }
+  @SuppressWarnings("WeakerAccess")
+  public Long countByAssayAccession(String assayAccession) {
+    return mongoSpectrumRepository.countByAssayAccession(assayAccession);
+  }
 
-    public Page<Spectrum> findByAssayAccession(Collection<String> assayAccessions, Pageable pageable) {
-        return mongoSpectrumRepository.findByAssayAccessionIn(assayAccessions, pageable);
-    }
+  public Page<Spectrum> findByAssayAccession(
+      Collection<String> assayAccessions, Pageable pageable) {
+    return mongoSpectrumRepository.findByAssayAccessionIn(assayAccessions, pageable);
+  }
 }

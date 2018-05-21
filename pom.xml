@@ -1,11 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>uk.ac.ebi.pride.architectural</groupId>
-        <artifactId>pride-core</artifactId>
-        <version>1.0.1</version>
-    </parent>
 
     <groupId>uk.ac.ebi.pride</groupId>
     <artifactId>spectrum-index-search</artifactId>
@@ -14,13 +9,16 @@
     <name>spectrum-index-search</name>
     <url>http://maven.apache.org</url>
 
-    <!--
-        To build the project use:
-            mvn clean package
-    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.1.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
     <properties>
-        <jmzreader.version>2.0.2-SNAPSHOT</jmzreader.version>
+        <jmzreader.version>2.0.4</jmzreader.version>
+        <java.version>1.8</java.version>
     </properties>
 
     <build>
@@ -47,6 +45,7 @@
         <plugins>
             <plugin> <!-- maven dependency plugin -->
                 <groupId>org.apache.maven.plugins</groupId>
+                <version>3.1.0</version>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -62,7 +61,6 @@
                             <overWriteIfNewer>true</overWriteIfNewer>
                         </configuration>
                     </execution>
-
                     <execution>
                         <phase>validate</phase>
                         <goals>
@@ -87,7 +85,6 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
 
@@ -95,9 +92,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
-                <!--NOTE: you must have this version number, otherwise, the build will not be able to find Validator-->
-                <!--<version>2.4</version>-->
+                <version>3.1.0</version>
                 <configuration>
                     <excludes>
                         <exclude>**/test</exclude>
@@ -118,42 +113,7 @@
     </build>
 
     <dependencies>
-
-        <!-- spring-data mongo db-->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-mongodb</artifactId>
-            <version>1.5.6.RELEASE</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mongodb</groupId>
-                    <artifactId>mongo-java-driver</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- mongo java driver, compatibility version -->
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>2.14.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>3.2.9.RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- fongo in memory mongo db for unit testing -->
-        <dependency>
-            <groupId>com.github.fakemongo</groupId>
-            <artifactId>fongo</artifactId>
-            <version>1.5.8</version>
-            <scope>test</scope>
-        </dependency>
-
+        <!-- ##### PRIDE dependencies ##### ##### ##### ##### ##### -->
         <!--MGF parsing-->
         <dependency>
             <groupId>uk.ac.ebi.pride.tools</groupId>
@@ -161,12 +121,38 @@
             <version>${jmzreader.version}</version>
         </dependency>
 
+        <!-- ##### 3rd party dependencies ##### ##### ##### ##### ##### -->
+        <!-- spring-data mongo db-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <!-- fongo in memory mongo db for unit testing -->
+        <dependency>
+            <groupId>com.github.fakemongo</groupId>
+            <artifactId>fongo</artifactId>
+            <version>2.2.0-RC1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!--Splash Spectral Hash Identifier-->
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.splash</groupId>
             <artifactId>core</artifactId>
-            <version>1.4</version>
-            <!--TODO 1.4 no longer available, we should use 1.8 latest, but this uses a new algorithm-->
+            <version>1.8</version>
         </dependency>
 
         <dependency>
@@ -176,21 +162,10 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>1.3</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.20</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
