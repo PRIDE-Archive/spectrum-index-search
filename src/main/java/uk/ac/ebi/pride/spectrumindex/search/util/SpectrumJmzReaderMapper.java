@@ -9,8 +9,17 @@ import uk.ac.ebi.pride.tools.mgf_parser.model.Ms2Query;
 import java.util.Iterator;
 import java.util.SortedMap;
 
+/** Maps JMZ Reader spectra to MongoDB spectra. */
 public class SpectrumJmzReaderMapper {
 
+  /**
+   * Maps a JMZ Reader spectrum to a MongoDB spectrum.
+   *
+   * @param projectAccession the project accession of the spectrum
+   * @param assayAccession the assay accession of the spectrum
+   * @param jmzReaderSpectrum the JMZ Reader spectrum
+   * @return a MongoDB spectrum
+   */
   public static uk.ac.ebi.pride.spectrumindex.search.model.Spectrum createMongoSpectrum(
       String projectAccession, String assayAccession, Ms2Query jmzReaderSpectrum) {
     Spectrum result = new Spectrum();
@@ -54,6 +63,12 @@ public class SpectrumJmzReaderMapper {
     return result;
   }
 
+  /**
+   * Cleans a spectrum ID, replacing certain special characters to underscores.
+   *
+   * @param spectrumId the spectrum ID to clean up
+   * @return the cleaned spectrum ID
+   */
   public static String getCleanSpectrumId(String spectrumId) {
     return spectrumId.replaceAll("[;=.]", "_");
   }

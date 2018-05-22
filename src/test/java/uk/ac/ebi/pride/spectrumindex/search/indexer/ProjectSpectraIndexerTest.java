@@ -16,6 +16,7 @@ import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 
+/** Tests indexing project spectra. */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {MongoTestConfiguration.class})
 public class ProjectSpectraIndexerTest {
@@ -42,28 +43,48 @@ public class ProjectSpectraIndexerTest {
   @Resource private SpectrumSearchService spectrumSearchService;
   @Resource private MongoSpectrumRepository mongoSpectrumRepository;
 
+  /** Sets up the classes to index and search spectra. */
   @Before
   public void setup() {
     projectSpectraIndexer =
         new ProjectSpectraIndexer(spectrumIndexService, spectrumSearchService, 100);
-    projectSpectraIndexer.setIndexingSizeStep(150);
+    projectSpectraIndexer.setIndexingStepSize(150);
     spectrumIndexService.setMongoSpectrumRepository(mongoSpectrumRepository);
     spectrumSearchService.setMongoSpectrumRepository(mongoSpectrumRepository);
   }
 
+  /**
+   * Tests indexing and deleting spectra from MGF.
+   *
+   * @throws Exception Problems indexing spectra, or sleeping threads.
+   */
   @Test
   public void testIndexMgf() throws Exception {
     indexMgf();
-    testDeleteByProject(PROJECT_1_ACCESSION);
+    deleteByProject(PROJECT_1_ACCESSION);
     indexMgf();
-    testDeleteByAssay(PROJECT_1_ASSAY_1);
+    deleteByAssay(PROJECT_1_ASSAY_1);
   }
 
-  private void searchAndCheckByProjectAndAssay(int hits) {
-    assertEquals(hits, (long) spectrumSearchService.countByProjectAccession(PROJECT_1_ACCESSION));
-    assertEquals(hits, (long) spectrumSearchService.countByAssayAccession(PROJECT_1_ASSAY_1));
+  /**
+   * Tests searching by project and assay accession numbers.
+   *
+   * @param expectedNumberOfHits the expected number of hits
+   */
+  private void searchAndCheckByProjectAndAssay(int expectedNumberOfHits) {
+    assertEquals(
+        expectedNumberOfHits,
+        (long) spectrumSearchService.countByProjectAccession(PROJECT_1_ACCESSION));
+    assertEquals(
+        expectedNumberOfHits,
+        (long) spectrumSearchService.countByAssayAccession(PROJECT_1_ASSAY_1));
   }
 
+  /**
+   * Indexes and MGF's spectra.
+   *
+   * @throws Exception Problems indexing spectra, or sleeping threads.
+   */
   private void indexMgf() throws Exception {
     projectSpectraIndexer.indexAllSpectraForProjectAndAssay(
         PROJECT_1_ACCESSION, PROJECT_1_ASSAY_1, new File(PATH_TO_MGF));
@@ -80,22 +101,38 @@ public class ProjectSpectraIndexerTest {
     searchAndCheckByProjectAndAssay(HITS);
   }
 
-  private void testDeleteByProject(@SuppressWarnings("SameParameterValue") String projectAccession)
+  /**
+   * Deletes spectra by project accession.
+   *
+   * @param projectAccession the project accession
+   * @throws Exception Problems indexing spectra, or sleeping threads.
+   */
+  private void deleteByProject(@SuppressWarnings("SameParameterValue") String projectAccession)
       throws Exception {
     projectSpectraIndexer.deleteAllSpectraForProject(projectAccession);
     Thread.sleep(TEN_SECONDS);
     searchAndCheckByProjectAndAssay(0);
   }
 
-  private void testDeleteByAssay(@SuppressWarnings("SameParameterValue") String assayASccession)
+  /**
+   * Deletes spectra by assay accession.
+   *
+   * @param assayAccession the assay accession
+   * @throws Exception Problems indexing spectra, or sleeping threads.
+   */
+  private void deleteByAssay(@SuppressWarnings("SameParameterValue") String assayAccession)
       throws Exception {
-    projectSpectraIndexer.deleteAllSpectraForAssay(assayASccession);
+    projectSpectraIndexer.deleteAllSpectraForAssay(assayAccession);
     Thread.sleep(TEN_SECONDS);
     searchAndCheckByProjectAndAssay(0);
   }
 
+  /**
+   * Tests indexing a problematic MGF file - this should throw an exception, which is caught and
+   * output.
+   */
   @Test
-  public void testProblematicMgf() {
+  public void testIndexAndFailProblematicMgf() {
     projectSpectraIndexer.indexAllSpectraForProjectAndAssay(
         PROJECT_1_ACCESSION, PROJECT_1_ASSAY_2, new File(PATH_TO_PROBLEMS_MGF));
   }

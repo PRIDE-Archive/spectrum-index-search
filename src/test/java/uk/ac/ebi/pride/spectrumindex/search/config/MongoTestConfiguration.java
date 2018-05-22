@@ -14,12 +14,22 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Configuration
 public class MongoTestConfiguration extends AbstractMongoConfiguration {
 
+  /**
+   * Gets the database name.
+   *
+   * @return the database name
+   */
   @SuppressWarnings("NullableProblems")
   @Override
   protected String getDatabaseName() {
     return "mongo-unit-test";
   }
 
+  /**
+   * Initializes the mongo client.
+   *
+   * @return the (Fongo) mongo client
+   */
   @SuppressWarnings("NullableProblems")
   @Bean
   @Override

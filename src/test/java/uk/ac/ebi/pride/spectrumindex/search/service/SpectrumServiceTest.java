@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/** Additional tests on the spectrum search and index services. */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {MongoTestConfiguration.class})
 @Slf4j
@@ -36,21 +37,25 @@ public class SpectrumServiceTest {
   @Resource private SpectrumIndexService spectrumIndexService;
   @Resource private SpectrumSearchService spectrumSearchService;
 
+  /** Sets up the tests by first deleting and then inserting test data. */
   @Before
   public void setUp() {
     deleteAllData();
     insertTestData();
   }
 
+  /** Tears down the unit tests and deletes all data. */
   @After
   public void tearDown() {
     deleteAllData();
   }
 
+  /** Deletes all data. */
   private void deleteAllData() {
     spectrumIndexService.deleteAll();
   }
 
+  /** Inserts test data. */
   private void insertTestData() {
     Spectrum spectrum_one = new Spectrum();
     spectrum_one.setId(SPECTRUM_1_ID);
@@ -69,8 +74,9 @@ public class SpectrumServiceTest {
     spectrumIndexService.save(spectrum_three);
   }
 
+  /** Tests searching by ID, project accession, and assay accession. */
   @Test
-  public void testSearchById() {
+  public void testSearchByIdAndAccessions() {
     Spectrum spectrum = spectrumSearchService.findById(SPECTRUM_1_ID);
     log.info("Cleaned example ID: " + SpectrumJmzReaderMapper.getCleanSpectrumId(spectrum.getId()));
     assertNotNull(spectrum);
@@ -105,12 +111,14 @@ public class SpectrumServiceTest {
     log.info("Spectrum hash code:" + spectrum.hashCode());
   }
 
+  /** Tests counting by project accession. */
   @Test
   public void testCountProjectAccession() {
     assertEquals(1, (long) spectrumSearchService.countByProjectAccession(PROJECT_1_ACCESSION));
     assertEquals(2, (long) spectrumSearchService.countByProjectAccession(PROJECT_2_ACCESSION));
   }
 
+  /** Tests counting by assay accession. */
   @Test
   public void testCountAssayAccession() {
     assertEquals(1, (long) spectrumSearchService.countByAssayAccession(ASSAY_1_1_ACCESSION));
@@ -118,4 +126,3 @@ public class SpectrumServiceTest {
     assertEquals(1, (long) spectrumSearchService.countByAssayAccession(ASSAY_2_2_ACCESSION));
   }
 }
-// todo JavaDoc
