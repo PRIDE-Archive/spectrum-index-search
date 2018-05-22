@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
+@SuppressWarnings("WeakerAccess")
 public class ProjectSpectraIndexer {
 
   private static final int MAX_PAGE_SIZE = 1000;

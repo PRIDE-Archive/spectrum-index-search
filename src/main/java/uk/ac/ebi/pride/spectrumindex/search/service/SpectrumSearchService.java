@@ -35,6 +35,7 @@ public class SpectrumSearchService {
     return mongoSpectrumRepository.countByProjectAccession(projectAccession);
   }
 
+  @SuppressWarnings("WeakerAccess")
   public Page<Spectrum> findByProjectAccession(
       Collection<String> projectAccessions, Pageable pageable) {
     return mongoSpectrumRepository.findByProjectAccessionIn(projectAccessions, pageable);
@@ -50,6 +51,7 @@ public class SpectrumSearchService {
     return mongoSpectrumRepository.countByAssayAccession(assayAccession);
   }
 
+  @SuppressWarnings("WeakerAccess")
   public Page<Spectrum> findByAssayAccession(
       Collection<String> assayAccessions, Pageable pageable) {
     return mongoSpectrumRepository.findByAssayAccessionIn(assayAccessions, pageable);

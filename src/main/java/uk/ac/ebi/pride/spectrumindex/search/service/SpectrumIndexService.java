@@ -2,7 +2,6 @@ package uk.ac.ebi.pride.spectrumindex.search.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 import uk.ac.ebi.pride.spectrumindex.search.service.repository.MongoSpectrumRepository;
@@ -22,12 +21,11 @@ public class SpectrumIndexService {
     this.mongoSpectrumRepository = mongoSpectrumRepository;
   }
 
-  @Transactional
+  @SuppressWarnings("WeakerAccess")
   public void save(Spectrum spectrum) {
     mongoSpectrumRepository.save(spectrum);
   }
 
-  @Transactional
   public void save(Collection<Spectrum> spectra) {
     if (CollectionUtils.isEmpty(spectra)) {
       log.error("No Spectrum to save");
@@ -37,12 +35,11 @@ public class SpectrumIndexService {
     }
   }
 
-  @Transactional
+  @SuppressWarnings("WeakerAccess")
   public void delete(Spectrum spectrum) {
     mongoSpectrumRepository.delete(spectrum);
   }
 
-  @Transactional
   public void delete(Collection<Spectrum> spectra) {
     if (CollectionUtils.isEmpty(spectra)) {
       log.error("No Spectra to delete");
@@ -51,7 +48,7 @@ public class SpectrumIndexService {
     }
   }
 
-  @Transactional
+  @SuppressWarnings("WeakerAccess")
   public void deleteAll() {
     mongoSpectrumRepository.deleteAll();
   }

@@ -7,15 +7,12 @@ import org.springframework.stereotype.Repository;
 import uk.ac.ebi.pride.spectrumindex.search.model.Spectrum;
 
 import java.util.Collection;
-import java.util.List;
 
 @Repository
 public interface MongoSpectrumRepository extends MongoRepository<Spectrum, String> {
 
   // Project accession methods
   Page<Spectrum> findByProjectAccession(String projectAccession, Pageable pageable);
-
-  List<Spectrum> findByProjectAccession(String projectAccession);
 
   Long countByProjectAccession(String projectAccession);
 
