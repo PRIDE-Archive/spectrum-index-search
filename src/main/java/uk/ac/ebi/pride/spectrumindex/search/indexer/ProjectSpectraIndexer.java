@@ -60,7 +60,7 @@ public class ProjectSpectraIndexer {
       MgfFile inputParser = new MgfFile(mgfFile);
       List<Spectrum> spectraToIndex = new LinkedList<>();
       log.info("There are " + inputParser.getSpectraCount() + " spectra to index");
-      log.info("Spectra index size step: " + indexingStepSize);
+      log.info("Spectra index step size: " + indexingStepSize);
       for (int i = 1; i <= inputParser.getSpectraCount(); i++) {
         Ms2Query spectrum = (Ms2Query) inputParser.getSpectrumByIndex(i);
         Spectrum mongoSpectrum =
