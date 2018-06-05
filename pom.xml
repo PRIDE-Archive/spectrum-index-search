@@ -20,7 +20,7 @@
     -->
 
     <properties>
-        <jmzreader.version>2.0.2-SNAPSHOT</jmzreader.version>
+        <jmzreader.version>2.0.4</jmzreader.version>
     </properties>
 
     <build>
