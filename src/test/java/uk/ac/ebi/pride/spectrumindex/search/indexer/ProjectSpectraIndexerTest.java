@@ -43,7 +43,7 @@ public class ProjectSpectraIndexerTest {
 
     @Before
     public void setup() throws Exception {
-        projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexService, 100);
+        projectSpectraIndexer = new ProjectSpectraIndexer(spectrumIndexService, spectrumSearchService, 100);
     }
 
     @Test
